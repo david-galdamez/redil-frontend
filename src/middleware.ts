@@ -5,7 +5,7 @@ const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
 export const onRequest = defineMiddleware(async (context, next) => {
     const { request, redirect, url } = context
 
-    const publicRoutes = ["/login"]
+    const publicRoutes = ["/login", "/redil/"]
 
     const isPublic = publicRoutes.some((route) => url.pathname.startsWith(route))
 
@@ -26,7 +26,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     try {
         const response = await fetch(`${API_URL}/api/auth/loged-in`, {
             headers: {
-                cookie: request.headers.get("access_token") || "",
+                cookie: request.headers.get("cookie") || "",
             },
         });
 
