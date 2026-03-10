@@ -1,42 +1,58 @@
 import { defineMiddleware } from "astro:middleware";
+import type { LogedUserDto } from "./types/user";
+import type { Locals } from "astro";
+import { getRoleRute, isPublicRoute } from "./lib/authHelper";
+import { publicRoutes, roleRoutes } from "./lib/authConfig";
+import { jwtDecode } from "jwt-decode";
 
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
+type JwtUser = {
+    id: string;
+    email: string;
+    role: string;
+    redil_id?: string
+}
 
 export const onRequest = defineMiddleware(async (context, next) => {
-    const { request, redirect, url } = context
+    const { redirect, url, cookies } = context
 
-    const publicRoutes = ["/login", "/redil/"]
+    const pathname = url.pathname;
 
-    const isPublic = publicRoutes.some((route) => url.pathname.startsWith(route))
+    const token = cookies.get("access_token")?.value;
 
-    if (isPublic) {
-        const response = await fetch(`${API_URL}/api/auth/loged-in`, {
-            headers: {
-                cookie: request.headers.get("cookie") ?? "",
-            },
-        });
+    const isPublic = isPublicRoute(pathname, publicRoutes);
+    const isLogin = pathname === "/login";
 
-        if (response.status === 204) {
-            return redirect("/dashboard");
+    let user: JwtUser | null = null;
+
+    if (token) {
+        try {
+            user = jwtDecode<JwtUser>(token);
+        } catch (err) {
+            console.error("Error decoding JWT:", err);
+            user = null;
         }
-
-        return next();
     }
 
-    try {
-        const response = await fetch(`${API_URL}/api/auth/loged-in`, {
-            headers: {
-                cookie: request.headers.get("cookie") || "",
-            },
-        });
+    (context.locals as Locals).user = user;
 
-        if (response.status === 401) {
-            return redirect("/login");
+    const rule = getRoleRute(pathname, roleRoutes);
+
+    if (rule) {
+        if (!user) return redirect("/login");
+
+        if (!rule.roles.includes(user.role)) {
+            return new Response("No Autorizado", { status: 403 });
         }
+    }
 
-        return next();
-    } catch (error) {
-        console.error("Error checking authentication:", error);
+
+    if (!user && !isPublic) {
         return redirect("/login");
     }
+
+    if (user && isLogin) {
+        return redirect("/dashboard");
+    }
+
+    return next();
 });

@@ -1,0 +1,25 @@
+---
+import type { Locals } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import RegisterClassForm from "../../components/RegisterClassForm";
+
+const user = (Astro.locals as Locals).user;
+
+const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+---
+
+<Layout>
+    {
+        user?.redil_id ? (
+            <div>
+                <h1>Registrar Clase</h1>
+                <RegisterClassForm client:load apiUrl={API_URL} />
+            </div>
+        ) : (
+            <div>
+                <h1>Acceso Denegado</h1>
+                <p>Debes estar asignado a un redil para crear una clase.</p>
+            </div>
+        )
+    }
+</Layout>

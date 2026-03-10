@@ -71,27 +71,33 @@ export default function RedilRegisterForm({ redilCode, apiUrl, groups }: Props) 
             }
 
             if (!res.ok || !data.success) {
-                toast.error({
-                    text: data.message || "Ocurrió un error desconocido",
-                })
+                setErrors(prev => ({
+                    ...prev,
+                    general: data.message || "Ocurrió un error desconocido",
+                }))
                 return;
             }
 
             toast.success({
                 text: data.message || "Inscripción exitosa",
             });
-            setForm({
-                name: "",
-                email: "",
-                isServer: false,
-                groupId: "",
-            })
         } catch (e) {
             console.error("Error submitting form:", e);
             toast.error({
                 text: "Ocurrió un errror de conexión",
             })
         } finally {
+            setForm({
+                name: "",
+                email: "",
+                isServer: false,
+                groupId: "",
+            })
+            setErrors({
+                name: "",
+                email: "",
+                general: "",
+            })
             setLoading(false);
         }
     }
@@ -101,13 +107,13 @@ export default function RedilRegisterForm({ redilCode, apiUrl, groups }: Props) 
             <label htmlFor="name">Nombre:</label>
             <input type="text" id="name" name="name" value={form.name} onChange={onChange} required />
             {
-                errors.name && <small className="error">{errors.name}</small>
+                errors.name && <p className="error">{errors.name}</p>
             }
 
             <label htmlFor="email">Email:</label>
             <input type="email" id="email" name="email" value={form.email} onChange={onChange} required />
             {
-                errors.email && <small className="error">{errors.email}</small>
+                errors.email && <p className="error">{errors.email}</p>
             }
 
             <label htmlFor="isServer">Es servidor:</label>
@@ -120,6 +126,8 @@ export default function RedilRegisterForm({ redilCode, apiUrl, groups }: Props) 
                     <option key={g.id} value={g.id}>{g.name}</option>
                 ))}
             </select>
+
+            {errors.general && <p className="error">{errors.general}</p>}
 
             <button type="submit">{loading ? "Inscribiéndose..." : "Inscribirse"}</button>
         </form>

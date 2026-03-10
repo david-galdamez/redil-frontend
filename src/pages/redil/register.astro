@@ -1,0 +1,11 @@
+---
+import RegisterRedilForm from "../../components/RegisterRedilForm";
+import Layout from "../../layouts/Layout.astro";
+
+const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
+---
+
+<Layout>
+    <h1>Registrar Redil</h1>
+    <RegisterRedilForm client:load apiUrl={API_URL} />
+</Layout>
