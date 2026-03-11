@@ -9,7 +9,7 @@ export const roleRoutes = [
         roles: ["Admin"],
     },
     {
-        pattern: /^\/teacher\/register$/,
+        pattern: /^\/teacher(\/.*)?$/,
         roles: ["Admin"],
     },
     {
