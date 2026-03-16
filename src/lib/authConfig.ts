@@ -1,12 +1,16 @@
 export const publicRoutes = [
     /^\/login$/,
-    /^\/redil\/[^/]+$/
+    /^\/redil\/student\/[^/]+$/
 ];
 
 export const roleRoutes = [
     {
         pattern: /^\/redil\/register$/,
         roles: ["Admin"],
+    },
+    {
+        pattern: /^\/redil\/[^/]+$/,
+        roles: ["Admin"]
     },
     {
         pattern: /^\/teacher(\/.*)?$/,

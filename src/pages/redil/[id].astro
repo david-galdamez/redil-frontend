@@ -1,0 +1,55 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import RedilDetails from "../../components/RedilDetails.tsx";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const API_URL = import.meta.env.PUBLIC_API_URL;
+
+let resData: ApiResponse<RedilDetailsDto> | null = null;
+let errorMessage = null;
+
+try {
+    const res = await fetch(`${API_URL}/api/redil/${id}`, {
+        headers: {
+            cookie: Astro.request.headers.get("cookie") || "",
+        },
+    });
+
+    if (!res.ok) {
+        if (res.status === 404) {
+            return Astro.redirect("/not-found");
+        }
+        Astro.response.status = res.status;
+        errorMessage = `Error ${res.status}: ${res.statusText}`;
+    } else {
+        resData = (await res.json()) as ApiResponse<RedilDetailsDto>;
+    }
+} catch (e) {
+    console.error("Error fetching redil data:", e);
+    Astro.response.status = 500;
+    errorMessage =
+        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
+}
+---
+
+<Layout>
+    {
+        resData?.success ? (
+            <div>
+                <RedilDetails
+                    client:load
+                    id={id!}
+                    redil={resData.data!}
+                    apiUrl={API_URL}
+                />
+            </div>
+        ) : (
+            <div>
+                <h1>Error encontrando Redil</h1>
+                <p>{resData?.message ?? errorMessage}</p>
+            </div>
+        )
+    }
+</Layout>

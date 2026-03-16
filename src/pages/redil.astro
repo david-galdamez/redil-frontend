@@ -1,0 +1,61 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+
+let resData: ApiResponse<RedilListDto[]> | null = null;
+let errorMessage = null;
+
+try {
+    const res = await fetch(`${API_URL}/api/redil`)
+
+    if (!res.ok) {
+        Astro.response.status = res.status;
+        errorMessage = `Error ${res.status}: ${res.statusText}`;
+    } else {
+        resData = (await res.json()) as ApiResponse<RedilListDto[]>;
+    }
+
+} catch (e) {
+    console.error("Error fetching redil data:", e);
+    Astro.response.status = 500;
+    errorMessage =
+        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
+}
+---
+
+<Layout>
+    {
+        resData?.success ? 
+        (
+            <h1>Dashboard de Rediles</h1>
+            <p>
+                Bienvenido, aqui podras gestionar a las Rediles registradas en el
+                sistema.
+            </p>
+            <div class="redil-list-container">
+                {
+                resData.data ? (
+                resData.data?.map((redil) => (
+                    <div class="redil-card" onclick={`window.location.href='/redil/${redil.id}'`}>
+                        <h2>{redil.name}</h2>
+                    </div>
+                ))
+                ) : (
+                    <p>No hay Rediles registradas</p>
+                )
+                }
+            </div>
+            <div>
+                <button onclick={`window.location.href='/redil/student/register'`}>Registrar Redil</button>
+            </div>
+        )
+        :
+        (
+            <div>
+                <h1>Error cargando Rediles</h1>
+                <p>{errorMessage || "No se pudieron cargar las Rediles."}</p>
+            </div>
+        )
+    }
+    </Layout>

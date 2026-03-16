@@ -29,7 +29,7 @@ export default function RegisterRedilForm({ apiUrl }: Props) {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch(`${apiUrl}/api/redil/register`, {
+            const res = await fetch(`${apiUrl}/api/redil`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

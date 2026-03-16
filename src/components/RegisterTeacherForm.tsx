@@ -5,7 +5,7 @@ import { set } from "astro:schema";
 
 interface Props {
     apiUrl: string;
-    rediles: RedilDto[];
+    rediles: RedilListDto[];
 }
 
 export default function RegisterTeacherForm({ apiUrl, rediles }: Props) {
@@ -42,7 +42,7 @@ export default function RegisterTeacherForm({ apiUrl, rediles }: Props) {
                 return;
             }
 
-            const res = await fetch(`${apiUrl}/api/teacher/register`, {
+            const res = await fetch(`${apiUrl}/api/teacher`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

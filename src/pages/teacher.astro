@@ -39,12 +39,21 @@ try {
                 sistema, asignarles clases y ver su desempeño.
             </p>
             <div class="teacher-list-container">
-                {resData.data?.map((teacher) => (
+                {
+                resData.data ? (
+                resData.data?.map((teacher) => (
                     <div class="teacher-card" onclick={`window.location.href='/teacher/${teacher.id}'`}>
                         <h2>{teacher.name}</h2>
-                        <p>Redil: {teacher.redilName}</p>
-                    </div>
-                ))}
+                            <p>Redil: {teacher.redilName}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p>No hay profesores registrados</p>
+                )
+                }
+                <div>
+                    <button onclick={`window.location.href='/teacher/register'`}>Registrar Profesor</button>
+                </div>
             </div>
         )
         :
