@@ -1,0 +1,23 @@
+---
+import type { Locals } from "astro";
+import Layout from "../layouts/Layout.astro";
+
+const user = (Astro.locals as Locals).user;
+---
+
+<Layout>
+    <section class="page-shell">
+        <header class="page-header">
+            <h1 class="page-title">Perfil</h1>
+            <p class="page-subtitle">Informacion de tu cuenta actual.</p>
+        </header>
+
+        <div class="page-card">
+            <div class="grid gap-3 sm:grid-cols-2">
+                <p class="text-sm sm:text-base"><strong>ID:</strong> <span class="break-all">{user?.id}</span></p>
+                <p class="text-sm sm:text-base"><strong>Correo:</strong> <span class="break-all">{user?.email}</span></p>
+                <p class="text-sm sm:text-base"><strong>Rol:</strong> {user?.role}</p>
+            </div>
+        </div>
+    </section>
+</Layout>

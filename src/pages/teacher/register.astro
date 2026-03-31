@@ -26,10 +26,15 @@ try {
 ---
 
 <Layout>
-    <h1>Registrar Profesor</h1>
-    <RegisterTeacherForm
-        client:load
-        apiUrl={API_URL}
-        rediles={resRedils?.data || []}
-    />
+    <section class="page-shell">
+        <header class="page-header">
+            <h1 class="page-title">Registrar profesor</h1>
+            <p class="page-subtitle">Completa el formulario para crear una cuenta docente.</p>
+        </header>
+        <RegisterTeacherForm
+            client:load
+            apiUrl={API_URL}
+            rediles={resRedils?.data || []}
+        />
+    </section>
 </Layout>

@@ -28,6 +28,9 @@ try {
     });
 
     if (res.ok) {
+        if (res.status === 404) {
+            return Astro.redirect("/not-found");
+        }
         resData = (await res.json()) as ApiResponse<TeacherDetailsDto>;
     } else {
         Astro.response.status = res.status;
@@ -44,23 +47,16 @@ try {
 <Layout>
     {
         resData?.success ? (
-            <div>
-                <TeacherDetails
-                    client:load
-                    id={id!}
-                    teacher={resData.data!}
-                    redils={redilsData?.data || []}
-                    apiUrl={API_URL}
-                />
-            </div>
+            <TeacherDetails client:load id={id!} teacher={resData.data!} redils={redilsData?.data || []} apiUrl={API_URL} />
         ) : (
-            <div>
-                <h1>Error cargando detalles del profesor</h1>
-                <p>
-                    {errorMessage ||
-                        "No se pudieron cargar los detalles del profesor."}
-                </p>
-            </div>
+            <section class="page-shell">
+                <div class="page-card">
+                    <h1 class="page-title">Error cargando detalles del profesor</h1>
+                    <p class="page-subtitle">
+                        {errorMessage || "No se pudieron cargar los detalles del profesor."}
+                    </p>
+                </div>
+            </section>
         )
     }
 </Layout>

@@ -109,26 +109,22 @@ export default function LoginForm({ apiUrl }: Props) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="email">Correo:</label>
-                <input type="email" id="email" name="email" required value={form.email} onChange={handleChange} />
-                {
-                    errors.email && <p className="error">{errors.email}</p>
-                }
+        <form className="form-card form-grid w-full max-w-md" onSubmit={handleSubmit}>
+            <div className="field-group">
+                <label className="label-base" htmlFor="email">Correo</label>
+                <input className="input-base" type="email" id="email" name="email" required value={form.email} onChange={handleChange} />
+                {errors.email && <p className="error-text">{errors.email}</p>}
             </div>
 
-            <div>
-                <label htmlFor="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required value={form.password} onChange={handleChange} />
-                {
-                    errors.password && <p className="error">{errors.password}</p>
-                }
+            <div className="field-group">
+                <label className="label-base" htmlFor="password">Contrasena</label>
+                <input className="input-base" type="password" id="password" name="password" required value={form.password} onChange={handleChange} />
+                {errors.password && <p className="error-text">{errors.password}</p>}
             </div>
 
-            {errors.general && <p className="error">{errors.general}</p>}
+            {errors.general && <p className="error-text">{errors.general}</p>}
 
-            <button type="submit" disabled={loading}>{loading ? "Iniciando sesión..." : "Iniciar sesión"}</button>
+            <button className="btn-primary w-full" type="submit" disabled={loading}>{loading ? "Iniciando sesion..." : "Iniciar sesion"}</button>
         </form>
     )
 }

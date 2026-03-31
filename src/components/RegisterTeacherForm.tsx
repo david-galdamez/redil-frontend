@@ -1,7 +1,6 @@
 import { toast } from "@pheralb/toast";
 import { useState } from "react";
 import { validatePassword } from "../lib/validatePassword";
-import { set } from "astro:schema";
 
 interface Props {
     apiUrl: string;
@@ -117,45 +116,41 @@ export default function RegisterTeacherForm({ apiUrl, rediles }: Props) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="name">Nombre: </label>
-            <input type="text" id="name" name="name" required value={form.name} onChange={handleChange} />
-            {
-                errors.name && <p className="error">{errors.name}</p>
-            }
+        <form className="form-card form-card-compact form-grid" onSubmit={handleSubmit}>
+            <div className="field-group">
+                <label className="label-base" htmlFor="name">Nombre</label>
+                <input className="input-base" type="text" id="name" name="name" required value={form.name} onChange={handleChange} />
+                {errors.name && <p className="error-text">{errors.name}</p>}
+            </div>
 
-            <label htmlFor="email">Correo electronico:</label>
-            <input type="email" id="email" name="email" required value={form.email} onChange={handleChange} />
-            {
-                errors.email && <p className="error">{errors.email}</p>
-            }
+            <div className="field-group">
+                <label className="label-base" htmlFor="email">Correo electronico</label>
+                <input className="input-base" type="email" id="email" name="email" required value={form.email} onChange={handleChange} />
+                {errors.email && <p className="error-text">{errors.email}</p>}
+            </div>
 
-            <label htmlFor="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required value={form.password} onChange={handleChange} />
-            {
-                errors.password && <p className="error">{errors.password}</p>
-            }
+            <div className="field-group">
+                <label className="label-base" htmlFor="password">Contrasena</label>
+                <input className="input-base" type="password" id="password" name="password" required value={form.password} onChange={handleChange} />
+                {errors.password && <p className="error-text">{errors.password}</p>}
+            </div>
 
-            <label htmlFor="redilId">Redil: </label>
-            <select name="redilId" id="redilId" required value={form.redilId} onChange={handleChange}>
-                <option value="0">Seleccione un redil</option>
-                {
-                    rediles.map(r => (
+            <div className="field-group">
+                <label className="label-base" htmlFor="redilId">Redil</label>
+                <select className="input-base" name="redilId" id="redilId" required value={form.redilId} onChange={handleChange}>
+                    <option value="0">Seleccione un redil</option>
+                    {rediles.map(r => (
                         <option key={r.id} value={r.id}>
                             {r.name}
                         </option>
-                    ))
-                }
-            </select>
-            {
-                errors.redilId && <p className="error">{errors.redilId}</p>
-            }
+                    ))}
+                </select>
+                {errors.redilId && <p className="error-text">{errors.redilId}</p>}
+            </div>
 
-            {
-                errors.general && <p className="error">{errors.general}</p>
-            }
+            {errors.general && <p className="error-text">{errors.general}</p>}
 
-            <button type="submit" disabled={loading}>
+            <button className="btn-primary w-full sm:w-fit" type="submit" disabled={loading}>
                 {loading ? "Registrando..." : "Registrar"}
             </button>
         </form>

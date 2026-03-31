@@ -28,34 +28,37 @@ try {
     {
         resData?.success ? 
         (
-            <h1>Dashboard de Rediles</h1>
-            <p>
-                Bienvenido, aqui podras gestionar a las Rediles registradas en el
-                sistema.
-            </p>
-            <div class="redil-list-container">
-                {
-                resData.data ? (
-                resData.data?.map((redil) => (
-                    <div class="redil-card" onclick={`window.location.href='/redil/${redil.id}'`}>
-                        <h2>{redil.name}</h2>
-                    </div>
-                ))
-                ) : (
-                    <p>No hay Rediles registradas</p>
-                )
-                }
-            </div>
-            <div>
-                <button onclick={`window.location.href='/redil/student/register'`}>Registrar Redil</button>
-            </div>
+            <section class="page-shell">
+                <header class="page-header">
+                    <h1 class="page-title">Dashboard de rediles</h1>
+                    <p class="page-subtitle">Gestiona las rediles registradas en el sistema.</p>
+                </header>
+                <div class="card-grid">
+                    {
+                    resData.data ? (
+                    resData.data?.map((redil) => (
+                        <article class="item-card" onclick={`window.location.href='/redil/${redil.id}'`}>
+                            <h2 class="text-lg font-semibold text-slate-900">{redil.name}</h2>
+                        </article>
+                    ))
+                    ) : (
+                        <p class="text-sm text-slate-600">No hay rediles registradas</p>
+                    )
+                    }
+                </div>
+                <div class="mt-6">
+                    <button class="btn-primary w-full sm:w-fit" onclick={`window.location.href='/redil/register'`}>Registrar redil</button>
+                </div>
+            </section>
         )
         :
         (
-            <div>
-                <h1>Error cargando Rediles</h1>
-                <p>{errorMessage || "No se pudieron cargar las Rediles."}</p>
-            </div>
+            <section class="page-shell">
+                <div class="page-card">
+                    <h1 class="page-title">Error cargando rediles</h1>
+                    <p class="page-subtitle">{errorMessage || "No se pudieron cargar las rediles."}</p>
+                </div>
+            </section>
         )
     }
     </Layout>

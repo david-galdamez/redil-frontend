@@ -1,23 +1,23 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { formatDateReadable } from "../lib/formatDate";
 import Pagination from "../components/Pagination.astro";
 
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000";
 const requestedPageParam = Number(Astro.url.searchParams.get("page") ?? "1");
 const requestedPage =
     Number.isFinite(requestedPageParam) && requestedPageParam > 0
         ? Math.floor(requestedPageParam)
         : 1;
 
-let resData: ApiResponse<PaginatedResponse<TeacherDto[]>> | null = null;
+let resData: ApiResponse<PaginatedResponse<ClassDto[]>> | null = null;
 let errorMessage = null;
-let paginatedTeachers: PaginatedResponse<TeacherDto[]> | null = null;
+let paginatedClasses: PaginatedResponse<ClassDto[]> | null = null;
 
 try {
-    const res = await fetch(`${API_URL}/api/teacher?page=${requestedPage}`, {
+    const res = await fetch(`${API_URL}/api/class?page=${requestedPage}`, {
         headers: {
             cookie: Astro.request.headers.get("cookie") || "",
-            "Content-Type": "application/json",
         },
     });
 
@@ -25,11 +25,11 @@ try {
         Astro.response.status = res.status;
         errorMessage = `Error ${res.status}: ${res.statusText}`;
     } else {
-        resData = (await res.json()) as ApiResponse<PaginatedResponse<TeacherDto[]>>;
-        paginatedTeachers = resData.data ?? null;
+        resData = (await res.json()) as ApiResponse<PaginatedResponse<ClassDto[]>>;
+        paginatedClasses = resData.data ?? null;
     }
 } catch (e) {
-    console.error("Error fetching teacher data:", e);
+    console.error("Error fetching class data:", e);
     Astro.response.status = 500;
     errorMessage =
         "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
@@ -41,59 +41,62 @@ try {
         resData?.success ? (
             <section class="page-shell">
                 <header class="page-header">
-                    <h1 class="page-title">Dashboard de profesores</h1>
+                    <h1 class="page-title">Dashboard de clases</h1>
                     <p class="page-subtitle">
-                        Gestiona docentes y revisa su redil asignada.
+                        Gestiona clases registradas, revisa su informacion y
+                        controla asistencia.
                     </p>
                     <p class="text-sm text-slate-500">
-                        Pagina {paginatedTeachers?.currentPage ?? requestedPage} de {paginatedTeachers?.totalPages ?? 1}
+                        Pagina {paginatedClasses?.currentPage ?? requestedPage} de {paginatedClasses?.totalPages ?? 1}
                         {" - "}
-                        {paginatedTeachers?.totalRecords ?? 0} profesores en total ({paginatedTeachers?.pageSize ?? 10} por pagina)
+                        {paginatedClasses?.totalRecords ?? 0} clases en total ({paginatedClasses?.pageSize ?? 10} por pagina)
                     </p>
                 </header>
                 <div class="card-grid card-grid-balanced">
-                    {paginatedTeachers?.data && paginatedTeachers.data.length > 0 ? (
-                        paginatedTeachers.data.map((teacher) => (
+                    {paginatedClasses?.data && paginatedClasses.data.length > 0 ? (
+                        paginatedClasses.data.map((c) => (
                             <article
                                 class="item-card item-card-balanced"
-                                onclick={`window.location.href='/teacher/${teacher.id}'`}
+                                onclick={`window.location.href='/class/${c.id}'`}
                             >
                                 <h2 class="text-lg font-semibold text-slate-900">
-                                    {teacher.name}
+                                    {c.redilName}
                                 </h2>
-                                <p class="mt-auto text-sm text-slate-600">
-                                    Redil: {teacher.redilName}
+                                <p class="text-sm text-slate-600 wrap-break-word">
+                                    {c.description}
+                                </p>
+                                <p class="mt-auto text-sm font-medium text-slate-500">
+                                    {formatDateReadable(c.classDate)}
                                 </p>
                             </article>
                         ))
                     ) : (
                         <p class="text-sm text-slate-600">
-                            No hay profesores registrados
+                            No hay clases registradas
                         </p>
                     )}
                 </div>
                 <Pagination
-                    currentPage={paginatedTeachers?.currentPage ?? requestedPage}
-                    totalPages={paginatedTeachers?.totalPages ?? 1}
-                    basePath="/teacher"
+                    currentPage={paginatedClasses?.currentPage ?? requestedPage}
+                    totalPages={paginatedClasses?.totalPages ?? 1}
+                    basePath="/class"
                     query={Astro.url.searchParams}
                 />
                 <div class="mt-6">
                     <button
                         class="btn-primary w-full sm:w-fit"
-                        onclick={`window.location.href='/teacher/register'`}
+                        onclick={`window.location.href='/class/register'`}
                     >
-                        Registrar profesor
+                        Registrar clase
                     </button>
                 </div>
             </section>
         ) : (
             <section class="page-shell">
                 <div class="page-card">
-                    <h1 class="page-title">Error cargando profesores</h1>
+                    <h1 class="page-title">Error cargando clases</h1>
                     <p class="page-subtitle">
-                        {errorMessage ||
-                            "No se pudieron cargar los profesores."}
+                        {errorMessage || "No se pudieron cargar las clases."}
                     </p>
                 </div>
             </section>

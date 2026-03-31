@@ -42,24 +42,42 @@ try {
 <Layout>
     {
         resData?.success ? (
-            <div>
-                <h1>Inscripcion a {resData?.data?.name}</h1>
-                <p>{resData?.data?.description}</p>
+            <section class="page-shell">
+                <header class="page-header">
+                    <h1 class="page-title">
+                        Inscripcion a {resData?.data?.name}
+                    </h1>
+                    <p class="page-subtitle">{resData?.data?.description}</p>
+                </header>
 
-                <div>
-                    <RedilRegisterForm
-                        client:load
-                        redilCode={redilCode || ""}
-                        apiUrl={API_URL}
-                        groups={resGroups?.data || []}
-                    />
+                <div class="page-card form-card-compact mb-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <p class="text-sm text-slate-600">
+                            Completa el formulario para registrar tu asistencia
+                            al redil.
+                        </p>
+                        <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+                            {resGroups?.data?.length || 0} grupos disponibles
+                        </span>
+                    </div>
                 </div>
-            </div>
+
+                <RedilRegisterForm
+                    client:load
+                    redilCode={redilCode || ""}
+                    apiUrl={API_URL}
+                    groups={resGroups?.data || []}
+                />
+            </section>
         ) : (
-            <div>
-                <h1>Error encontrando Redil</h1>
-                <p>{resData?.message ?? errorMessage}</p>
-            </div>
+            <section class="page-shell">
+                <div class="page-card">
+                    <h1 class="page-title">Error encontrando redil</h1>
+                    <p class="page-subtitle">
+                        {resData?.message ?? errorMessage}
+                    </p>
+                </div>
+            </section>
         )
     }
 </Layout>

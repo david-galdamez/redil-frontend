@@ -21,6 +21,7 @@ export default function RedilRegisterForm({
   const [errors, setErrors] = useState({
     name: "",
     email: "",
+    groupId: "",
     general: "",
   });
   const [loading, setLoading] = useState(false);
@@ -29,19 +30,35 @@ export default function RedilRegisterForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
+    const isCheckbox =
+      type === "checkbox" && e.target instanceof HTMLInputElement;
+    const checkedValue = isCheckbox
+      ? (e.target as HTMLInputElement).checked
+      : false;
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? value === "on" : value,
+      [name]: isCheckbox ? checkedValue : value,
     }));
   };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    let shouldReset = false;
     setErrors({
       name: "",
       email: "",
+      groupId: "",
       general: "",
     });
+
+    if (!form.groupId) {
+      setErrors((prev) => ({
+        ...prev,
+        groupId: "Debes seleccionar un grupo",
+      }));
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch(`${apiUrl}/api/student/register/${redilCode}`, {
@@ -68,6 +85,12 @@ export default function RedilRegisterForm({
               email: err.message,
             }));
           }
+          if (err.field.toLowerCase() === "groupid") {
+            setErrors((prev) => ({
+              ...prev,
+              groupId: err.message,
+            }));
+          }
         });
         return;
       }
@@ -83,80 +106,63 @@ export default function RedilRegisterForm({
       toast.success({
         text: data.message || "Inscripción exitosa",
       });
+      shouldReset = true;
     } catch (e) {
       console.error("Error submitting form:", e);
       toast.error({
-        text: "Ocurrió un errror de conexión",
+        text: "Ocurrió un error de conexión",
       });
     } finally {
-      setForm({
-        name: "",
-        email: "",
-        isServer: false,
-        groupId: "",
-      });
-      setErrors({
-        name: "",
-        email: "",
-        general: "",
-      });
+      if (shouldReset) {
+        setForm({
+          name: "",
+          email: "",
+          isServer: false,
+          groupId: "",
+        });
+      }
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="name">Nombre:</label>
-      <input
-        type="text"
-        id="name"
-        name="name"
-        value={form.name}
-        onChange={onChange}
-        required
-      />
-      {errors.name && <p className="error">{errors.name}</p>}
+    <form className="form-card form-card-compact form-grid" onSubmit={handleSubmit}>
+      <div className="field-group">
+        <label className="label-base" htmlFor="name">Nombre completo</label>
+        <input className="input-base" type="text" id="name" name="name" value={form.name} onChange={onChange} required />
+        {errors.name && <p className="error-text">{errors.name}</p>}
+      </div>
 
-      <label htmlFor="email">Email:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        value={form.email}
-        onChange={onChange}
-        required
-      />
-      {errors.email && <p className="error">{errors.email}</p>}
+      <div className="field-group">
+        <label className="label-base" htmlFor="email">Correo electrónico</label>
+        <input className="input-base" type="email" id="email" name="email" value={form.email} onChange={onChange} required />
+        {errors.email && <p className="error-text">{errors.email}</p>}
+      </div>
 
-      <label htmlFor="isServer">Es servidor:</label>
-      <input
-        type="checkbox"
-        id="isServer"
-        name="isServer"
-        checked={form.isServer}
-        onChange={onChange}
-      />
+      <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+        <div className="field-group">
+          <label className="label-base" htmlFor="groupId">Grupo al que asiste</label>
+          <select className="input-base" id="groupId" name="groupId" value={form.groupId} onChange={onChange} required>
+            <option value="">Selecciona un grupo</option>
+            {groups?.map((g) => (
+              <option key={g.id} value={g.id}>
+                {g.name}
+              </option>
+            ))}
+          </select>
+          {errors.groupId && <p className="error-text">{errors.groupId}</p>}
+        </div>
 
-      <label htmlFor="groupId">Grupo al que asiste:</label>
-      <select
-        id="groupId"
-        name="groupId"
-        value={form.groupId}
-        onChange={onChange}
-        required
-      >
-        <option value="0">Selecciona un grupo</option>
-        {groups?.map((g) => (
-          <option key={g.id} value={g.id}>
-            {g.name}
-          </option>
-        ))}
-      </select>
+        <label className="inline-flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700" htmlFor="isServer">
+          <input className="checkbox-base" type="checkbox" id="isServer" name="isServer" checked={form.isServer} onChange={onChange} />
+          Es servidor
+        </label>
+      </div>
 
-      {errors.general && <p className="error">{errors.general}</p>}
+      {errors.general && <p className="error-text">{errors.general}</p>}
 
-      <button type="submit">
-        {loading ? "Inscribiéndose..." : "Inscribirse"}
+      <button className="btn-primary w-full sm:w-fit" type="submit" disabled={loading}>
+        {loading ? "Inscribiendose..." : "Inscribirse"}
       </button>
     </form>
   );

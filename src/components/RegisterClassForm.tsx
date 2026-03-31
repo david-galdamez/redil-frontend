@@ -40,7 +40,7 @@ export default function RegisterClassForm({ apiUrl }: Props) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify(payload),
                 credentials: "include"
             })
 
@@ -96,25 +96,23 @@ export default function RegisterClassForm({ apiUrl }: Props) {
     }
 
     return (
-        <form onSubmit={handleSubmit} >
-            <label htmlFor="date">Fecha de la clase:</label>
-            <input type="datetime-local" name="date" id="date" required value={form.date} onChange={handleChange} />
-            {
-                errors.date && <p className="error">{errors.date}</p>
-            }
+        <form className="form-card form-card-compact form-grid" onSubmit={handleSubmit}>
+            <div className="field-group">
+                <label className="label-base" htmlFor="date">Fecha de la clase</label>
+                <input className="input-base" type="datetime-local" name="date" id="date" required value={form.date} onChange={handleChange} />
+                {errors.date && <p className="error-text">{errors.date}</p>}
+            </div>
 
-            <label htmlFor="description">Descripcion de la clase:</label>
-            <textarea name="description" id="description" required value={form.description} onChange={handleChange}></textarea>
-            {
-                errors.description && <p className="error">{errors.description}</p>
-            }
+            <div className="field-group">
+                <label className="label-base" htmlFor="description">Descripcion de la clase</label>
+                <textarea className="input-base min-h-28" name="description" id="description" required value={form.description} onChange={handleChange}></textarea>
+                {errors.description && <p className="error-text">{errors.description}</p>}
+            </div>
 
-            {
-                errors.general && <p className="error">{errors.general}</p>
-            }
+            {errors.general && <p className="error-text">{errors.general}</p>}
 
-            <button disabled={loading} type="submit">
-                {loading ? "Registrando..." : "Registrar Clase"}
+            <button className="btn-primary w-full sm:w-fit" disabled={loading} type="submit">
+                {loading ? "Registrando..." : "Registrar clase"}
             </button>
         </form>
     )

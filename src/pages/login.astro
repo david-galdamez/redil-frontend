@@ -6,8 +6,11 @@ const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 ---
 
 <Layout>
-    <div>
-        <h1>Login</h1>
+    <section class="page-shell">
+        <header class="page-header">
+            <h1 class="page-title">Iniciar sesion</h1>
+            <p class="page-subtitle">Accede a tu cuenta para administrar tu informacion.</p>
+        </header>
         <LoginForm client:load apiUrl={API_URL} />
-    </div>
+    </section>
 </Layout>

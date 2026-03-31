@@ -1,17 +1,18 @@
 ---
+import ClassDetails from "../../components/ClassDetails";
 import Layout from "../../layouts/Layout.astro";
-import RedilDetails from "../../components/RedilDetails.tsx";
 
 export const prerender = false;
 
-const { id } = Astro.params;
-const API_URL = import.meta.env.PUBLIC_API_URL;
+const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000";
 
-let resData: ApiResponse<RedilDetailsDto> | null = null;
+const { id } = Astro.params;
+
+let resData: ApiResponse<ClassDetailsDto> | null = null;
 let errorMessage = null;
 
 try {
-    const res = await fetch(`${API_URL}/api/redil/${id}`, {
+    const res = await fetch(`${API_URL}/api/class/${id}`, {
         headers: {
             cookie: Astro.request.headers.get("cookie") || "",
         },
@@ -24,7 +25,7 @@ try {
         Astro.response.status = res.status;
         errorMessage = `Error ${res.status}: ${res.statusText}`;
     } else {
-        resData = (await res.json()) as ApiResponse<RedilDetailsDto>;
+        resData = (await res.json()) as ApiResponse<ClassDetailsDto>;
     }
 } catch (e) {
     console.error("Error fetching redil data:", e);
@@ -37,12 +38,18 @@ try {
 <Layout>
     {
         resData?.success ? (
-            <RedilDetails client:load id={id!} redil={resData.data!} apiUrl={API_URL} />
+            <ClassDetails
+                client:only
+                apiUrl={API_URL}
+                classDetails={resData.data!}
+            />
         ) : (
             <section class="page-shell">
                 <div class="page-card">
-                    <h1 class="page-title">Error encontrando redil</h1>
-                    <p class="page-subtitle">{resData?.message ?? errorMessage}</p>
+                    <h1 class="page-title">Error encontrando clase</h1>
+                    <p class="page-subtitle">
+                        {resData?.message ?? errorMessage}
+                    </p>
                 </div>
             </section>
         )

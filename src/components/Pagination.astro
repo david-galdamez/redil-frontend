@@ -1,0 +1,84 @@
+---
+interface Props {
+    currentPage: number;
+    totalPages: number;
+    basePath: string;
+    query?: URLSearchParams;
+}
+
+const {
+    currentPage: currentPageProp,
+    totalPages: totalPagesProp,
+    basePath,
+    query = new URLSearchParams(),
+} = Astro.props;
+
+const totalPages = Math.max(1, totalPagesProp || 1);
+const currentPage = Math.min(Math.max(1, currentPageProp || 1), totalPages);
+
+const buildLink = (page: number) => {
+    const params = new URLSearchParams(query);
+
+    if (page <= 1) {
+        params.delete("page");
+    } else {
+        params.set("page", String(page));
+    }
+
+    const queryString = params.toString();
+    return queryString ? `${basePath}?${queryString}` : basePath;
+};
+
+const visiblePages = new Set<number>([
+    1,
+    totalPages,
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+]);
+const pageList = Array.from(visiblePages)
+    .filter((p) => p >= 1 && p <= totalPages)
+    .sort((a, b) => a - b);
+---
+
+{
+    totalPages > 1 && (
+        <nav class="pagination-nav" aria-label="Paginacion">
+            {currentPage > 1 ? (
+                <a class="pagination-btn" href={buildLink(currentPage - 1)}>
+                    Anterior
+                </a>
+            ) : (
+                <span class="pagination-btn pagination-btn-disabled">Anterior</span>
+            )}
+
+            <div class="pagination-pages">
+                {pageList.map((page, index) => (
+                    <Fragment>
+                        {index > 0 && page - pageList[index - 1] > 1 && (
+                            <span class="pagination-ellipsis">...</span>
+                        )}
+                        <a
+                            href={buildLink(page)}
+                            class:list={[
+                                "pagination-page",
+                                { "pagination-page-active": page === currentPage },
+                            ]}
+                            aria-current={page === currentPage ? "page" : undefined}
+                        >
+                            {page}
+                        </a>
+                    </Fragment>
+                ))}
+            </div>
+
+            {currentPage < totalPages ? (
+                <a class="pagination-btn" href={buildLink(currentPage + 1)}>
+                    Siguiente
+                </a>
+            ) : (
+                <span class="pagination-btn pagination-btn-disabled">Siguiente</span>
+            )}
+        </nav>
+    )
+}

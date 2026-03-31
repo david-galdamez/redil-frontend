@@ -6,6 +6,11 @@ const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
 ---
 
 <Layout>
-    <h1>Registrar Redil</h1>
-    <RegisterRedilForm client:load apiUrl={API_URL} />
+    <section class="page-shell">
+        <header class="page-header">
+            <h1 class="page-title">Registrar redil</h1>
+            <p class="page-subtitle">Crea un nuevo redil para organizar profesores y clases.</p>
+        </header>
+        <RegisterRedilForm client:load apiUrl={API_URL} />
+    </section>
 </Layout>
