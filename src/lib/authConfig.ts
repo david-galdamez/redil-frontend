@@ -25,4 +25,12 @@ export const roleRoutes = [
         pattern: /^\/class(\/.*)?$/,
         roles: ["Admin", "Maestro"],
     },
+    {
+        pattern: /^\/profile(\/.*)?$/,
+        roles: ["Admin", "Maestro"],
+    },
+    {
+        pattern: /^\/my-redil(\/.*)?$/,
+        roles: ["Admin", "Maestro"],
+    },
 ]

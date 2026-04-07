@@ -1,7 +1,7 @@
 import { toast } from "@pheralb/toast";
 import type React from "react";
 import { useState } from "react";
-import { formatDateLocal } from "../lib/formatDate";
+import { formatDateLocal, formatDateReadable } from "../lib/formatDate";
 
 interface Props {
     apiUrl: string;
@@ -89,7 +89,7 @@ export default function AssistClassDetails({ apiUrl, assistClass, attendanceToke
             <header className="page-header">
                 <h1 className="page-title">Asistencia - {assistClass.redilName}</h1>
                 <p className="page-subtitle">{assistClass.classDescription}</p>
-                <p className="text-sm text-slate-500">Clase dada: {formatDateLocal(assistClass.classDate)}</p>
+                <p className="text-sm text-slate-500">Clase dada: {formatDateReadable(assistClass.classDate)}</p>
             </header>
 
             <form className="form-card form-card-compact form-grid" onSubmit={handleSubmit}>

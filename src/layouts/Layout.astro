@@ -2,20 +2,24 @@
 import { Toaster } from "@pheralb/toast";
 import "../styles/global.css";
 import type { Locals } from "astro";
+import { isPublicRoute } from "../lib/authHelper";
+import { publicRoutes } from "../lib/authConfig";
 
 const user = (Astro.locals as Locals).user;
 const pathname = Astro.url.pathname;
-const isProtectedPage = Boolean(user);
+const isPublic = isPublicRoute(pathname, publicRoutes);
+const isProtectedPage = Boolean(user) && !isPublic;
 
 const navLinks = [
     { href: "/dashboard", label: "Dashboard", roles: ["Admin", "Maestro"] },
     { href: "/redil", label: "Rediles", roles: ["Admin"] },
     { href: "/teacher", label: "Profesores", roles: ["Admin"] },
     { href: "/class", label: "Clases", roles: ["Admin", "Maestro"] },
+    { href: "/my-redil", label: "Mi Redil", roles: ["Admin", "Maestro"] },
 ];
 
 const visibleLinks = navLinks.filter((item) =>
-    user ? item.roles.includes(user.role) : false
+    user ? item.roles.includes(user.role) : false,
 );
 ---
 
@@ -34,34 +38,54 @@ const visibleLinks = navLinks.filter((item) =>
                 <header class="app-navbar">
                     <div class="app-navbar-content">
                         <div class="app-navbar-left">
-                            <a href="/dashboard" class="app-navbar-brand">Redil App</a>
+                            <a href="/dashboard" class="app-navbar-brand">
+                                Redil App
+                            </a>
                             <span class="app-role-chip">{user?.role}</span>
                         </div>
                         <nav class="app-navbar-links">
-                            {visibleLinks.map((item) => (
-                                <a
-                                    href={item.href}
-                                    class:list={[
-                                        "app-navbar-link",
-                                        { "app-navbar-link-active": pathname === item.href },
-                                    ]}
-                                >
-                                    {item.label}
-                                </a>
-                            ))}
+                            {visibleLinks
+                                .filter((item) => {
+                                    if (
+                                        item.label == "Mi Redil" &&
+                                        !user?.redil_id
+                                    )
+                                        return false;
+                                    return true;
+                                })
+                                .map((item) => (
+                                    <a
+                                        href={item.href}
+                                        class:list={[
+                                            "app-navbar-link",
+                                            {
+                                                "app-navbar-link-active":
+                                                    pathname === item.href,
+                                            },
+                                        ]}
+                                    >
+                                        {item.label}
+                                    </a>
+                                ))}
                         </nav>
                         <div class="app-navbar-actions">
                             <a
                                 href="/profile"
                                 class:list={[
                                     "btn-secondary app-action-button",
-                                    { "app-navbar-link-active": pathname === "/profile" },
+                                    {
+                                        "app-navbar-link-active":
+                                            pathname === "/profile",
+                                    },
                                 ]}
                             >
                                 Perfil
                             </a>
                             <form method="post" action="/logout">
-                                <button type="submit" class="btn-secondary app-action-button">
+                                <button
+                                    type="submit"
+                                    class="btn-secondary app-action-button"
+                                >
                                     Cerrar sesion
                                 </button>
                             </form>

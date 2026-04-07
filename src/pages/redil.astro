@@ -1,21 +1,19 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import RedilList from "../components/RedilList";
 
 const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
-
 let resData: ApiResponse<RedilListDto[]> | null = null;
 let errorMessage = null;
 
 try {
-    const res = await fetch(`${API_URL}/api/redil`)
-
+    const res = await fetch(`${API_URL}/api/redil`);
     if (!res.ok) {
         Astro.response.status = res.status;
         errorMessage = `Error ${res.status}: ${res.statusText}`;
     } else {
         resData = (await res.json()) as ApiResponse<RedilListDto[]>;
     }
-
 } catch (e) {
     console.error("Error fetching redil data:", e);
     Astro.response.status = 500;
@@ -26,39 +24,35 @@ try {
 
 <Layout>
     {
-        resData?.success ? 
-        (
+        resData?.success ? (
             <section class="page-shell">
                 <header class="page-header">
                     <h1 class="page-title">Dashboard de rediles</h1>
-                    <p class="page-subtitle">Gestiona las rediles registradas en el sistema.</p>
+                    <p class="page-subtitle">
+                        Gestiona las rediles registradas en el sistema.
+                    </p>
                 </header>
-                <div class="card-grid">
-                    {
-                    resData.data ? (
-                    resData.data?.map((redil) => (
-                        <article class="item-card" onclick={`window.location.href='/redil/${redil.id}'`}>
-                            <h2 class="text-lg font-semibold text-slate-900">{redil.name}</h2>
-                        </article>
-                    ))
-                    ) : (
-                        <p class="text-sm text-slate-600">No hay rediles registradas</p>
-                    )
-                    }
-                </div>
+
+                <RedilList client:load redils={resData.data ?? []} />
+
                 <div class="mt-6">
-                    <button class="btn-primary w-full sm:w-fit" onclick={`window.location.href='/redil/register'`}>Registrar redil</button>
+                    <button
+                        class="btn-primary w-full sm:w-fit"
+                        onclick="window.location.href='/redil/register'"
+                    >
+                        Registrar redil
+                    </button>
                 </div>
             </section>
-        )
-        :
-        (
+        ) : (
             <section class="page-shell">
                 <div class="page-card">
                     <h1 class="page-title">Error cargando rediles</h1>
-                    <p class="page-subtitle">{errorMessage || "No se pudieron cargar las rediles."}</p>
+                    <p class="page-subtitle">
+                        {errorMessage || "No se pudieron cargar las rediles."}
+                    </p>
                 </div>
             </section>
         )
     }
-    </Layout>
+</Layout>

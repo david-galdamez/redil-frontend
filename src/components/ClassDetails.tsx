@@ -1,6 +1,7 @@
 import { toast } from "@pheralb/toast";
 import { useEffect, useState } from "react";
 import { formatDateLocal } from "../lib/formatDate";
+import { copyToClipboard } from "../lib/copyToClipboard";
 
 interface Props {
     apiUrl: string;
@@ -12,14 +13,6 @@ export default function ClassDetails({ apiUrl, classDetails }: Props) {
     const [details, setDetails] = useState(classDetails)
 
     const assistLink = `${window.location.origin}/assist/${details.attendanceToken}`
-    const copyToClipboard = async () => {
-        try {
-            await navigator.clipboard.writeText(assistLink)
-            toast.success({ text: "Link copiado al portapapeles 📋" })
-        } catch (e) {
-            toast.error({ text: "No se pudo copiar el link" })
-        }
-    }
 
     const passAssist = async () => {
         try {
@@ -87,7 +80,7 @@ export default function ClassDetails({ apiUrl, classDetails }: Props) {
                                     Abrir
                                 </button>
 
-                                <button className="btn-primary" onClick={copyToClipboard}>
+                                <button className="btn-primary" onClick={() => copyToClipboard(assistLink)}>
                                     Copiar link
                                 </button>
                             </div>

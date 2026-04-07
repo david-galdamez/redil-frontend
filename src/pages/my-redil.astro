@@ -1,17 +1,22 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import RedilDetails from "../../components/RedilDetails.tsx";
+import Layout from "../layouts/Layout.astro";
+import RedilDetailsTeachers from "../components/RedilDetailsTeachers.tsx";
+import type { Locals } from "astro";
 
 export const prerender = false;
 
-const { id } = Astro.params;
+const user = (Astro.locals as Locals).user;
 const API_URL = import.meta.env.PUBLIC_API_URL;
 
 let resData: ApiResponse<RedilDetailsDto> | null = null;
 let errorMessage = null;
 
+if (!user) {
+    return (Astro.response.status = 401);
+}
+
 try {
-    const res = await fetch(`${API_URL}/api/redil/${id}`, {
+    const res = await fetch(`${API_URL}/api/redil/${user?.redil_id}`, {
         headers: {
             cookie: Astro.request.headers.get("cookie") || "",
         },
@@ -37,9 +42,9 @@ try {
 <Layout>
     {
         resData?.success ? (
-            <RedilDetails
+            <RedilDetailsTeachers
                 client:only
-                id={id!}
+                id={user.redil_id!}
                 redil={resData.data!}
                 apiUrl={API_URL}
             />

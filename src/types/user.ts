@@ -12,3 +12,10 @@ export interface JwtUser {
     role: string;
     redil_id?: string
 }
+
+export interface UserDetailsDto {
+    name: string;
+    email: string;
+    role: string;
+    redilName: string;
+}

@@ -1,5 +1,4 @@
 import { defineMiddleware } from "astro:middleware";
-import type { LogedUserDto } from "./types/user";
 import type { Locals } from "astro";
 import { getRoleRute, isPublicRoute } from "./lib/authHelper";
 import { publicRoutes, roleRoutes } from "./lib/authConfig";
