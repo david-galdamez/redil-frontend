@@ -145,7 +145,7 @@ export default function RedilDetails({ id, redil, apiUrl }: Props) {
                 </div>
                 <div className="field-group">
 
-                    <label className="label-base">Descripcion</label>
+                    <label className="label-base">Descripción</label>
                     <textarea
                         className="input-base min-h-24"
                         name="description"
@@ -158,7 +158,7 @@ export default function RedilDetails({ id, redil, apiUrl }: Props) {
                     }
                 </div>
                 <div className="space-y-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-                    <p><strong>Link de asistencia:</strong></p>
+                    <p><strong>Link de registro:</strong></p>
 
                     <input
                         className="input-base"

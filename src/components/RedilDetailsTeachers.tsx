@@ -50,7 +50,7 @@ export default function RedilDetailsTeachers({ id, redil, apiUrl }: Props) {
                 </div>
                 <div className="field-group">
 
-                    <label className="label-base">Descripcion</label>
+                    <label className="label-base">Descripción</label>
                     <textarea
                         className="input-base min-h-24"
                         name="description"

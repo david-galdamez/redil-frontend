@@ -130,7 +130,7 @@ export default function RegisterTeacherForm({ apiUrl, rediles }: Props) {
             </div>
 
             <div className="field-group">
-                <label className="label-base" htmlFor="password">Contrasena</label>
+                <label className="label-base" htmlFor="password">Contraseña</label>
                 <input className="input-base" type="password" id="password" name="password" required value={form.password} onChange={handleChange} />
                 {errors.password && <p className="error-text">{errors.password}</p>}
             </div>
