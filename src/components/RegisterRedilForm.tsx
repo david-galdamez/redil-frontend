@@ -97,7 +97,7 @@ export default function RegisterRedilForm({ apiUrl }: Props) {
             </div>
 
             <div className="field-group">
-                <label className="label-base" htmlFor="description">Descripcion</label>
+                <label className="label-base" htmlFor="description">Descripción</label>
                 <textarea className="input-base min-h-28" id="description" name="description" required value={form.description} onChange={handleChange}></textarea>
                 {errors.description && <p className="error-text">{errors.description}</p>}
             </div>

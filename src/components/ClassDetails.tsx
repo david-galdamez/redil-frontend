@@ -54,7 +54,7 @@ export default function ClassDetails({ apiUrl, classDetails }: Props) {
 
             <div className="page-card space-y-4">
                 <div className="field-group">
-                    <label className="label-base" htmlFor="description">Descripcion de la clase</label>
+                    <label className="label-base" htmlFor="description">Descripción de la clase</label>
                     <textarea className="input-base min-h-24" name="description" id="description" defaultValue={details.classDescription} disabled />
                 </div>
 

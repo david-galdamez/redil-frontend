@@ -1,6 +1,7 @@
 import { toast } from "@pheralb/toast";
 import { useEffect, useState } from "react";
 import type { UserDetailsDto } from "../types/user";
+import { validatePassword } from "../lib/validatePassword";
 
 interface Props {
     user: UserDetailsDto;
@@ -112,8 +113,13 @@ export default function ProfileDetails({ user, apiUrl }: Props) {
             setPasswordErrors(prev => ({ ...prev, currentPassword: "Ingresa tu contraseña actual." }));
             valid = false;
         }
-        if (passwordForm.newPassword.length < 8) {
-            setPasswordErrors(prev => ({ ...prev, newPassword: "La nueva contraseña debe tener al menos 8 caracteres." }));
+
+        const validPassword = validatePassword(passwordForm.newPassword);
+        if (!validPassword) {
+            setPasswordErrors(prev => ({
+                ...prev,
+                password: "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales."
+            }));
             valid = false;
         }
         if (passwordForm.newPassword !== passwordForm.confirmPassword) {
