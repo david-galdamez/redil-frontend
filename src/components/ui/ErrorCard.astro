@@ -1,0 +1,16 @@
+---
+interface Props {
+    title?: string;
+    message?: string | null;
+}
+const { title = "Error cargando datos", message } = Astro.props;
+---
+
+<section class="page-shell">
+    <div class="page-card">
+        <h1 class="page-title">{title}</h1>
+        <p class="page-subtitle">
+            {message || "Ocurrió un error inesperado. Intenta más tarde."}
+        </p>
+    </div>
+</section>

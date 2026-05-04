@@ -33,4 +33,5 @@ interface AssisClassDetailDto {
     redilName: string;
     classDescription: string;
     classDate: string;
+    emails: string[];
 }

@@ -36,7 +36,7 @@ try {
 <Layout>
     {
         resData?.success ? (
-            <AssistClassDetails client:load apiUrl={API_URL}, assistClass={resData.data!} attendanceToken={assistToken!} />
+            <AssistClassDetails client:load apiUrl={API_URL}, assistClass={resData.data!} attendanceToken={assistToken!} emails={resData.data?.emails!} />
         ) : (
             <section class="page-shell">
                 <div class="page-card">

@@ -14,7 +14,9 @@ const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
             <section class="page-shell">
                 <header class="page-header">
                     <h1 class="page-title">Registrar clase</h1>
-                    <p class="page-subtitle">Completa los datos para publicar una nueva clase.</p>
+                    <p class="page-subtitle">
+                        Completa los datos para publicar una nueva clase.
+                    </p>
                 </header>
                 <RegisterClassForm client:load apiUrl={API_URL} />
             </section>
@@ -22,7 +24,9 @@ const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
             <section class="page-shell">
                 <div class="page-card">
                     <h1 class="page-title">Acceso denegado</h1>
-                    <p class="page-subtitle">Debes estar asignado a un redil para crear una clase.</p>
+                    <p class="page-subtitle">
+                        Debes estar asignado a un redil para crear una clase.
+                    </p>
                 </div>
             </section>
         )
