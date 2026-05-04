@@ -1,6 +1,7 @@
 ---
 import { Toaster } from "@pheralb/toast";
 import "../styles/global.css";
+import "../styles/navbar.css";
 import type { Locals } from "astro";
 import { isPublicRoute } from "../lib/authHelper";
 import { publicRoutes } from "../lib/authConfig";
@@ -11,7 +12,7 @@ const isPublic = isPublicRoute(pathname, publicRoutes);
 const isProtectedPage = Boolean(user) && !isPublic;
 
 const navLinks = [
-    { href: "/dashboard", label: "Dashboard", roles: ["Admin", "Maestro"] },
+    { href: "/", label: "Dashboard", roles: ["Admin"] },
     { href: "/redil", label: "Rediles", roles: ["Admin"] },
     { href: "/teacher", label: "Profesores", roles: ["Admin"] },
     { href: "/class", label: "Clases", roles: ["Admin", "Maestro"] },
@@ -21,13 +22,17 @@ const navLinks = [
 const visibleLinks = navLinks.filter((item) =>
     user ? item.roles.includes(user.role) : false,
 );
+
+const userInitials = user?.name
+    ? user.name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase()
+    : "?";
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <title>Redil App</title>
@@ -38,59 +43,90 @@ const visibleLinks = navLinks.filter((item) =>
                 <header class="app-navbar">
                     <div class="app-navbar-content">
                         <div class="app-navbar-left">
-                            <a href="/dashboard" class="app-navbar-brand">
-                                Redil App
-                            </a>
-                            <span class="app-role-chip">{user?.role}</span>
+                            <a href="/" class="app-navbar-brand">Redil App</a>
                         </div>
+
                         <nav class="app-navbar-links">
                             {visibleLinks
                                 .filter((item) => {
-                                    if (
-                                        item.label == "Mi Redil" &&
-                                        !user?.redil_id
-                                    )
-                                        return false;
+                                    if (item.label === "Mi Redil" && !user?.redil_id) return false;
                                     return true;
                                 })
                                 .map((item) => (
-                                    <a
+                                    <a 
                                         href={item.href}
                                         class:list={[
                                             "app-navbar-link",
-                                            {
-                                                "app-navbar-link-active":
-                                                    pathname === item.href,
-                                            },
+                                            { "app-navbar-link-active": pathname === item.href },
                                         ]}
                                     >
                                         {item.label}
                                     </a>
                                 ))}
                         </nav>
+
                         <div class="app-navbar-actions">
-                            <a
-                                href="/profile"
-                                class:list={[
-                                    "btn-secondary app-action-button",
-                                    {
-                                        "app-navbar-link-active":
-                                            pathname === "/profile",
-                                    },
-                                ]}
-                            >
-                                Perfil
-                            </a>
-                            <form method="post" action="/logout">
-                                <button
-                                    type="submit"
-                                    class="btn-secondary app-action-button"
-                                >
-                                    Cerrar sesion
+                            <div class="user-menu-wrapper">
+                                <button class="user-menu-btn" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+                                    <div class="user-avatar">{userInitials}</div>
+                                    <span class="user-name">{user?.name}</span>
+                                    <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <polyline points="6 9 12 15 18 9"/>
+                                    </svg>
                                 </button>
-                            </form>
+
+                                <div class="user-dropdown" id="userDropdown" role="menu">
+                                    <div class="dropdown-header">
+                                        <div class="dh-name">{user?.name}</div>
+                                        <div class="dh-role">{user?.role}</div>
+                                    </div>
+                                    <a href="/profile" class="dropdown-item" role="menuitem">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                        Ver perfil
+                                    </a>
+                                    <div class="dropdown-divider" />
+                                    <form method="post" action="/logout">
+                                        <button type="submit" class="dropdown-item danger" role="menuitem">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                                            </svg>
+                                            Cerrar sesión
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="3" y1="6" x2="21" y2="6"/>
+                                    <line x1="3" y1="12" x2="21" y2="12"/>
+                                    <line x1="3" y1="18" x2="21" y2="18"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
+
+                    <!-- Nav mobile -->
+                    <nav class="mobile-nav" id="mobileNav">
+                        {visibleLinks
+                            .filter((item) => {
+                                if (item.label === "Mi Redil" && !user?.redil_id) return false;
+                                return true;
+                            })
+                            .map((item) => (
+                                <a 
+                                    href={item.href}
+                                    class:list={[
+                                        "app-navbar-link",
+                                        { "app-navbar-link-active": pathname === item.href },
+                                    ]}
+                                >
+                                    {item.label}
+                                </a>
+                            ))}
+                    </nav>
                 </header>
             )
         }
@@ -99,11 +135,27 @@ const visibleLinks = navLinks.filter((item) =>
     </body>
 </html>
 
-<style>
-    html,
-    body {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-    }
-</style>
+<script>
+    const btn = document.getElementById("userMenuBtn");
+    const dropdown = document.getElementById("userDropdown");
+    const chevron = btn?.querySelector(".chevron");
+    const hamburger = document.getElementById("hamburgerBtn");
+    const mobileNav = document.getElementById("mobileNav");
+
+    btn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = dropdown?.classList.toggle("open");
+        chevron?.classList.toggle("open", isOpen);
+        btn.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    document.addEventListener("click", () => {
+        dropdown?.classList.remove("open");
+        chevron?.classList.remove("open");
+        btn?.setAttribute("aria-expanded", "false");
+    });
+
+    hamburger?.addEventListener("click", () => {
+        mobileNav?.classList.toggle("open");
+    });
+</script>

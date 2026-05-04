@@ -28,10 +28,14 @@ try {
     if (!res.ok) {
         Astro.response.status = res.status;
         errorMessage = `Error ${res.status}: ${res.statusText}`;
-        const error = (await res.json()) as ApiResponse<PaginatedResponse<TeacherDto[]>>;
-        console.log(error)
+        const error = (await res.json()) as ApiResponse<
+            PaginatedResponse<TeacherDto[]>
+        >;
+        console.log(error);
     } else {
-        resData = (await res.json()) as ApiResponse<PaginatedResponse<TeacherDto[]>>;
+        resData = (await res.json()) as ApiResponse<
+            PaginatedResponse<TeacherDto[]>
+        >;
         paginatedTeachers = resData.data ?? null;
     }
 } catch (e) {
@@ -52,13 +56,14 @@ try {
                         Gestiona docentes y revisa su redil asignada.
                     </p>
                     <p class="text-sm text-slate-500">
-                        Pagina {paginatedTeachers?.currentPage ?? requestedPage} de {paginatedTeachers?.totalPages ?? 1}
+                        Pagina {paginatedTeachers?.currentPage ?? requestedPage}{" "}
+                        de {paginatedTeachers?.totalPages ?? 1}
                         {" - "}
-                        {paginatedTeachers?.totalRecords ?? 0} profesores en total ({paginatedTeachers?.pageSize ?? 10} por pagina)
+                        {paginatedTeachers?.totalRecords ?? 0} profesores en
+                        total ({paginatedTeachers?.pageSize ?? 10} por pagina)
                     </p>
                 </header>
 
-                <!-- Búsqueda -->
                 <form method="get" action="/teacher" class="flex gap-2 mb-4">
                     <input
                         class="input-base flex-1"
@@ -67,14 +72,11 @@ try {
                         placeholder="Buscar profesor..."
                         value={search}
                     />
-                    <button class="btn-primary" type="submit">Buscar</button>
-                    {search && (
-                        <a class="btn-secondary" href="/teacher">Limpiar</a>
-                    )}
                 </form>
 
                 <div class="card-grid card-grid-balanced">
-                    {paginatedTeachers?.data && paginatedTeachers.data.length > 0 ? (
+                    {paginatedTeachers?.data &&
+                    paginatedTeachers.data.length > 0 ? (
                         paginatedTeachers.data.map((teacher) => (
                             <article
                                 class="item-card item-card-balanced"
@@ -98,7 +100,9 @@ try {
                 </div>
 
                 <Pagination
-                    currentPage={paginatedTeachers?.currentPage ?? requestedPage}
+                    currentPage={
+                        paginatedTeachers?.currentPage ?? requestedPage
+                    }
                     totalPages={paginatedTeachers?.totalPages ?? 1}
                     basePath="/teacher"
                     query={Astro.url.searchParams}
@@ -117,10 +121,23 @@ try {
                 <div class="page-card">
                     <h1 class="page-title">Error cargando profesores</h1>
                     <p class="page-subtitle">
-                        {errorMessage || "No se pudieron cargar los profesores."}
+                        {errorMessage ||
+                            "No se pudieron cargar los profesores."}
                     </p>
                 </div>
             </section>
         )
     }
 </Layout>
+<script>
+    const input = document.querySelector<HTMLInputElement>(
+        'input[name="search"]',
+    );
+    const form = input?.closest("form");
+    let timer: ReturnType<typeof setTimeout>;
+
+    input?.addEventListener("input", () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => form?.submit(), 500);
+    });
+</script>

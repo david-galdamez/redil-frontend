@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { StudentListDto } from "../types/students";
 
 interface Props {
@@ -13,7 +13,7 @@ export default function StudentsTab({ redilId, apiUrl }: Props) {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [search, setSearch] = useState("");
-    const [searchInput, setSearchInput] = useState("");
+    const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -45,39 +45,25 @@ export default function StudentsTab({ redilId, apiUrl }: Props) {
         fetchStudents();
     }, [redilId, page, search]);
 
-    function handleSearch() {
-        setPage(1);
-        setSearch(searchInput);
-    }
-
-    function handleClear() {
-        setSearchInput("");
-        setSearch("");
-        setPage(1);
+    function handleSearchInput(value: string) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            setPage(1);
+            setSearch(value);
+        }, 500);
     }
 
     if (error) return <p className="error-text">{error}</p>;
 
     return (
         <div className="space-y-3">
-            {/* Búsqueda */}
             <div className="flex gap-2">
                 <input
                     className="input-base flex-1"
                     type="search"
                     placeholder="Buscar estudiante..."
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    onChange={(e) => handleSearchInput(e.target.value)}
                 />
-                <button className="btn-primary" onClick={handleSearch} disabled={loading}>
-                    Buscar
-                </button>
-                {search && (
-                    <button className="btn-secondary" onClick={handleClear}>
-                        Limpiar
-                    </button>
-                )}
             </div>
 
             {loading ? (
@@ -118,7 +104,6 @@ export default function StudentsTab({ redilId, apiUrl }: Props) {
                 </div>
             )}
 
-            {/* Paginacion */}
             {totalPages > 1 && (
                 <div className="flex items-center justify-between pt-1">
                     <p className="text-xs text-slate-500">

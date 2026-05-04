@@ -1,12 +1,4 @@
-import { useEffect, useState } from "react";
-
-interface ClassStatsRequestDto {
-    redilId?: string;
-    fromDate: string;
-    toDate: string;
-    groupId?: number;
-    search?: string;
-}
+import { useEffect, useState, useRef } from "react";
 
 interface Props {
     apiUrl: string;
@@ -26,7 +18,6 @@ function AttendanceBadge({ value }: { value: number }) {
 }
 
 export default function TeacherStats({ apiUrl, redilId }: Props) {
-
     const isAdmin = redilId === undefined;
 
     const today = new Date().toISOString().split("T")[0];
@@ -49,11 +40,12 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
     useEffect(() => {
         fetchGroups();
         if (isAdmin) fetchRediles();
-        fetchStats(1);
+        fetchStats(1, filters);
     }, []);
 
     async function fetchGroups() {
@@ -61,9 +53,7 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
             const res = await fetch(`${apiUrl}/api/groups`);
             const data: ApiResponse<GroupDto[]> = await res.json();
             if (data.success) setGroups(data.data ?? []);
-        } catch {
-            // grupos opcionales, no bloquear
-        }
+        } catch { }
     }
 
     async function fetchRediles() {
@@ -71,28 +61,23 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
             const res = await fetch(`${apiUrl}/api/redil`);
             const data: ApiResponse<RedilListDto[]> = await res.json();
             if (data.success) setRediles(data.data ?? []);
-        } catch {
-            // grupos opcionales, no bloquear
-        }
+        } catch { }
     }
 
-    async function fetchStats(targetPage: number) {
+    async function fetchStats(targetPage: number, currentFilters: ClassStatsRequestDto) {
         setLoading(true);
         setError(null);
         try {
             const endpoint = isAdmin
                 ? `${apiUrl}/api/redil/stats?page=${targetPage}`
                 : `${apiUrl}/api/teacher/redil/stats?page=${targetPage}`;
-            const res = await fetch(endpoint,
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(filters),
-                }
-            );
-            const data: ApiResponse<PaginatedResponse<RedilClassStatDto[]>> =
-                await res.json();
+            const res = await fetch(endpoint, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(currentFilters),
+            });
+            const data: ApiResponse<PaginatedResponse<RedilClassStatDto[]>> = await res.json();
             if (data.success && data.data) {
                 setStats(data.data.data);
                 setTotalPages(data.data.totalPages);
@@ -107,13 +92,17 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
         }
     }
 
-    function handleSearch() {
-        fetchStats(1);
+    function handleFilterChange(partial: Partial<ClassStatsRequestDto>) {
+        setFilters((prev) => {
+            const updated = { ...prev, ...partial };
+            clearTimeout(debounceRef.current!);
+            debounceRef.current = setTimeout(() => fetchStats(1, updated), 500);
+            return updated;
+        });
     }
 
     return (
         <div className="space-y-4">
-            {/* Filtros */}
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
                 <div className="flex flex-wrap gap-3">
                     <div className="field-group flex-1 min-w-[140px]">
@@ -122,9 +111,7 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
                             type="date"
                             className="input-base"
                             value={filters.fromDate}
-                            onChange={(e) =>
-                                setFilters((f) => ({ ...f, fromDate: e.target.value }))
-                            }
+                            onChange={(e) => handleFilterChange({ fromDate: e.target.value })}
                         />
                     </div>
                     <div className="field-group flex-1 min-w-[140px]">
@@ -133,12 +120,9 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
                             type="date"
                             className="input-base"
                             value={filters.toDate}
-                            onChange={(e) =>
-                                setFilters((f) => ({ ...f, toDate: e.target.value }))
-                            }
+                            onChange={(e) => handleFilterChange({ toDate: e.target.value })}
                         />
                     </div>
-                    {/* Dropdown de redil: solo visible en modo admin */}
                     {isAdmin && (
                         <div className="field-group flex-1 min-w-[140px]">
                             <label className="label-base">Redil</label>
@@ -146,17 +130,14 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
                                 className="input-base"
                                 value={filters.redilId ?? ""}
                                 onChange={(e) =>
-                                    setFilters((f) => ({
-                                        ...f,
-                                        redilId: e.target.value ? e.target.value : undefined,
-                                    }))
+                                    handleFilterChange({
+                                        redilId: e.target.value || undefined,
+                                    })
                                 }
                             >
                                 <option value="">Todos los rediles</option>
                                 {rediles.map((r) => (
-                                    <option key={r.id} value={r.id}>
-                                        {r.name}
-                                    </option>
+                                    <option key={r.id} value={r.id}>{r.name}</option>
                                 ))}
                             </select>
                         </div>
@@ -168,17 +149,14 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
                                 className="input-base"
                                 value={filters.groupId ?? ""}
                                 onChange={(e) =>
-                                    setFilters((f) => ({
-                                        ...f,
+                                    handleFilterChange({
                                         groupId: e.target.value ? Number(e.target.value) : undefined,
-                                    }))
+                                    })
                                 }
                             >
                                 <option value="">Todos los grupos</option>
                                 {groups.map((g) => (
-                                    <option key={g.id} value={g.id}>
-                                        {g.name}
-                                    </option>
+                                    <option key={g.id} value={g.id}>{g.name}</option>
                                 ))}
                             </select>
                         </div>
@@ -191,29 +169,25 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
                             placeholder="Nombre del estudiante..."
                             value={filters.search ?? ""}
                             onChange={(e) =>
-                                setFilters((f) => ({
-                                    ...f,
+                                handleFilterChange({
                                     search: e.target.value || undefined,
-                                }))
+                                })
                             }
                         />
                     </div>
                 </div>
-                <div className="actions-row pt-0!">
-                    <button className="btn-primary" onClick={handleSearch} disabled={loading}>
-                        {loading ? "Buscando..." : "Buscar"}
-                    </button>
-                </div>
             </div>
 
-            {/* Error */}
             {error && (
                 <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                     {error}
                 </div>
             )}
 
-            {/* Tabla */}
+            {loading && (
+                <p className="text-sm text-slate-500 text-center py-6">Cargando...</p>
+            )}
+
             {!loading && stats.length === 0 && !error && (
                 <p className="text-sm text-slate-500 text-center py-6">
                     No hay estadísticas para el período seleccionado.
@@ -240,9 +214,7 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
                                 <span className="text-slate-500 truncate">{s.groupName}</span>
                                 <span className="text-slate-500 truncate">{s.redilName}</span>
                                 <span>
-                                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${s.isServer
-                                        ? "bg-green-100 text-green-700"
-                                        : "bg-slate-100 text-slate-600"
+                                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${s.isServer ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"
                                         }`}>
                                         {s.isServer ? "Sí" : "No"}
                                     </span>
@@ -253,24 +225,20 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
                             </div>
                         ))}
                     </div>
-
-                    {/* Paginación */}
                     <div className="flex justify-between items-center pt-1 text-sm text-slate-500">
-                        <span>
-                            Página {page} de {totalPages}
-                        </span>
+                        <span>Página {page} de {totalPages}</span>
                         <div className="flex gap-2">
                             <button
                                 className="btn-secondary"
                                 disabled={page <= 1 || loading}
-                                onClick={() => fetchStats(page - 1)}
+                                onClick={() => fetchStats(page - 1, filters)}
                             >
                                 Anterior
                             </button>
                             <button
                                 className="btn-secondary"
                                 disabled={page >= totalPages || loading}
-                                onClick={() => fetchStats(page + 1)}
+                                onClick={() => fetchStats(page + 1, filters)}
                             >
                                 Siguiente
                             </button>

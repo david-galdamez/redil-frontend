@@ -1,4 +1,5 @@
 import { toast } from "@pheralb/toast";
+import { navigate } from "astro/virtual-modules/transitions-router.js";
 import { useState } from "react";
 
 interface Props {
@@ -44,7 +45,7 @@ export default function RegisterClassForm({ apiUrl }: Props) {
                 credentials: "include"
             })
 
-            const data = (await res.json()) as ApiResponse<any>;
+            const data = (await res.json()) as ApiResponse<RegisterClassResponse>;
 
             if (res.status === 400 && data.errors) {
                 data.errors.forEach((err: Error) => {
@@ -73,8 +74,9 @@ export default function RegisterClassForm({ apiUrl }: Props) {
             }
 
             toast.success({
-                text: data.message || "Registro exitoso",
+                text: data.message || "Registro de clase exitoso",
             })
+            navigate(`/class/${data.data?.id}`)
             setForm({
                 date: "",
                 description: "",
@@ -84,7 +86,6 @@ export default function RegisterClassForm({ apiUrl }: Props) {
                 description: "",
                 general: "",
             })
-
         } catch (err) {
             console.error(err)
             toast.error({

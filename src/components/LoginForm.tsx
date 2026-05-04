@@ -88,7 +88,7 @@ export default function LoginForm({ apiUrl }: Props) {
             toast.success({
                 text: data.message || "Inicio de sesión exitoso",
             })
-            navigate("/dashboard");
+            navigate("/");
             setForm({
                 email: "",
                 password: "",

@@ -1,3 +1,19 @@
+interface RegisterClassResponse {
+    id: number;
+    redilId: number;
+    teacherId: number;
+    date: string;
+    description: string;
+}
+
+interface ClassStatsRequestDto {
+    redilId?: string;
+    fromDate: string;
+    toDate: string;
+    groupId?: number;
+    search?: string;
+}
+
 interface ClassDto {
     id: number;
     redilName: string;
