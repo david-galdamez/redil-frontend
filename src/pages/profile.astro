@@ -2,57 +2,22 @@
 import type { UserDetailsDto } from "../types/user";
 import Layout from "../layouts/Layout.astro";
 import ProfileDetails from "../components/ProfileDetails";
+import { getProfile } from "../lib/api/auth";
+import { API_URL } from "../lib/api/client";
+import ErrorCard from "../components/ui/ErrorCard.astro";
 
-const API_URL = import.meta.env.PUBLIC_API_URL;
-let resData: ApiResponse<UserDetailsDto> | null = null;
-let errorMessage: string | null = null;
+const cookie = Astro.request.headers.get("cookie");
+const profile = await getProfile(cookie);
 
-try {
-    const res = await fetch(`${API_URL}/api/auth/me`, {
-        headers: {
-            cookie: Astro.request.headers.get("cookie") || "",
-        },
-    });
-
-    if (!res.ok) {
-        Astro.response.status = res.status;
-        errorMessage = `Error ${res.status}: ${res.statusText}`;
-    } else {
-        resData = (await res.json()) as ApiResponse<UserDetailsDto>;
-    }
-} catch (e) {
-    console.error("Error fetching user data:", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
-
-const data = resData?.data;
+if (profile.error) Astro.response.status = profile.status;
 ---
 
 <Layout>
     {
-        errorMessage ? (
-            <section class="page-shell">
-                <div class="page-card error-card">
-                    <p class="error-message">⚠ {errorMessage}</p>
-                </div>
-            </section>
+        profile.data ? (
+            <ProfileDetails client:load user={profile.data!} apiUrl={API_URL} />
         ) : (
-            <ProfileDetails client:load user={data!} apiUrl={API_URL} />
+            <ErrorCard message={profile.error} />
         )
     }
 </Layout>
-
-<style>
-    .error-card {
-        border: 1px solid #f87171;
-        background-color: #fef2f2;
-        border-radius: 0.5rem;
-        padding: 1rem;
-    }
-    .error-message {
-        color: #b91c1c;
-        font-size: 0.95rem;
-    }
-</style>

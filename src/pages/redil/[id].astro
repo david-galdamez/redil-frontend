@@ -1,57 +1,32 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import RedilDetails from "../../components/RedilDetails.tsx";
+import { API_URL } from "../../lib/api/client";
+import { getRedilDetails } from "../../lib/api/redil";
+import { redirectToDefaultLocale } from "astro:i18n";
+import ErrorCard from "../../components/ui/ErrorCard.astro";
 
 export const prerender = false;
 
 const { id } = Astro.params;
-const API_URL = import.meta.env.PUBLIC_API_URL;
+const cookie = Astro.request.headers.get("cookie");
 
-let resData: ApiResponse<RedilDetailsDto> | null = null;
-let errorMessage = null;
-
-try {
-    const res = await fetch(`${API_URL}/api/redil/${id}`, {
-        headers: {
-            cookie: Astro.request.headers.get("cookie") || "",
-        },
-    });
-
-    if (!res.ok) {
-        if (res.status === 404) {
-            return Astro.redirect("/not-found");
-        }
-        Astro.response.status = res.status;
-        errorMessage = `Error ${res.status}: ${res.statusText}`;
-    } else {
-        resData = (await res.json()) as ApiResponse<RedilDetailsDto>;
-    }
-} catch (e) {
-    console.error("Error fetching redil data:", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
+const redil = await getRedilDetails(id!, cookie);
+if (redil.status === 404) return Astro.redirect("/not-found");
+if (redil.error) Astro.response.status = redil.status;
 ---
 
 <Layout>
     {
-        resData?.success ? (
+        redil?.data ? (
             <RedilDetails
                 client:only
                 id={id!}
-                redil={resData.data!}
+                redil={redil.data!}
                 apiUrl={API_URL}
             />
         ) : (
-            <section class="page-shell">
-                <div class="page-card">
-                    <h1 class="page-title">Error encontrando redil</h1>
-                    <p class="page-subtitle">
-                        {resData?.message ?? errorMessage}
-                    </p>
-                </div>
-            </section>
+            <ErrorCard message={redil.error} />
         )
     }
 </Layout>

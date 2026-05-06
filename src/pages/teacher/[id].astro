@@ -1,62 +1,36 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { API_URL } from "../../lib/api/client";
 import TeacherDetails from "../../components/TeacherDetails";
+import { getTeacherDetails, getRedils } from "../../lib/api/teachers";
+import ErrorCard from "../../components/ui/ErrorCard.astro";
 
 export const prerender = false;
 
 const { id } = Astro.params;
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+const cookie = Astro.request.headers.get("cookie");
 
-let resData: ApiResponse<TeacherDetailsDto> | null = null;
-let redilsData: ApiResponse<RedilDto[]> | null = null;
-let errorMessage = null;
+const [teacher, redils] = await Promise.all([
+    getTeacherDetails(id!, cookie),
+    getRedils(),
+]);
 
-try {
-    const redilsRes = await fetch(`${API_URL}/api/redil`);
-    if (redilsRes.ok) {
-        redilsData = (await redilsRes.json()) as ApiResponse<RedilDto[]>;
-    } else {
-        Astro.response.status = redilsRes.status;
-        errorMessage = `Error ${redilsRes.status}: ${redilsRes.statusText}`;
-    }
-
-    const res = await fetch(`${API_URL}/api/teacher/${id}`, {
-        headers: {
-            cookie: Astro.request.headers.get("cookie") || "",
-            "Content-Type": "application/json",
-        },
-    });
-
-    if (res.ok) {
-        if (res.status === 404) {
-            return Astro.redirect("/not-found");
-        }
-        resData = (await res.json()) as ApiResponse<TeacherDetailsDto>;
-    } else {
-        Astro.response.status = res.status;
-        errorMessage = `Error ${res.status}: ${res.statusText}`;
-    }
-} catch (e) {
-    console.error("Error fetching teacher details:", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
+if (teacher.status === 404) return Astro.redirect("/not-found");
+if (teacher.error) Astro.response.status = teacher.status;
 ---
 
 <Layout>
     {
-        resData?.success ? (
-            <TeacherDetails client:load id={id!} teacher={resData.data!} redils={redilsData?.data || []} apiUrl={API_URL} />
+        teacher.data ? (
+            <TeacherDetails
+                client:load
+                id={id!}
+                teacher={teacher.data!}
+                redils={redils.data || []}
+                apiUrl={API_URL}
+            />
         ) : (
-            <section class="page-shell">
-                <div class="page-card">
-                    <h1 class="page-title">Error cargando detalles del profesor</h1>
-                    <p class="page-subtitle">
-                        {errorMessage || "No se pudieron cargar los detalles del profesor."}
-                    </p>
-                </div>
-            </section>
+            <ErrorCard message={teacher.error} />
         )
     }
 </Layout>

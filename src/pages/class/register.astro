@@ -2,10 +2,9 @@
 import type { Locals } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import RegisterClassForm from "../../components/RegisterClassForm";
+import { API_URL } from "../../lib/api/client";
 
 const user = (Astro.locals as Locals).user;
-
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 ---
 
 <Layout>

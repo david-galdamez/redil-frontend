@@ -2,61 +2,37 @@
 import Layout from "../layouts/Layout.astro";
 import RedilDetailsTeachers from "../components/RedilDetailsTeachers.tsx";
 import type { Locals } from "astro";
+import { API_URL } from "../lib/api/client";
+import { getRedilDetails } from "../lib/api/redil";
+import ErrorCard from "../components/ui/ErrorCard.astro";
 
 export const prerender = false;
 
 const user = (Astro.locals as Locals).user;
-const API_URL = import.meta.env.PUBLIC_API_URL;
-
-let resData: ApiResponse<RedilDetailsDto> | null = null;
-let errorMessage = null;
+const cookie = Astro.request.headers.get("cookie");
 
 if (!user) {
     return (Astro.response.status = 401);
+} else if (!user.redil_id) {
+    return (Astro.response.status = 403);
 }
 
-try {
-    const res = await fetch(`${API_URL}/api/redil/${user?.redil_id}`, {
-        headers: {
-            cookie: Astro.request.headers.get("cookie") || "",
-        },
-    });
-
-    if (!res.ok) {
-        if (res.status === 404) {
-            return Astro.redirect("/not-found");
-        }
-        Astro.response.status = res.status;
-        errorMessage = `Error ${res.status}: ${res.statusText}`;
-    } else {
-        resData = (await res.json()) as ApiResponse<RedilDetailsDto>;
-    }
-} catch (e) {
-    console.error("Error fetching redil data:", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
+const redilDetails = await getRedilDetails(user.redil_id, cookie!);
+if (redilDetails.status === 404) return Astro.redirect("/not-found");
+if (redilDetails.error) Astro.response.status = redilDetails.status;
 ---
 
 <Layout>
     {
-        resData?.success ? (
+        redilDetails?.data ? (
             <RedilDetailsTeachers
                 client:only
                 id={user.redil_id!}
-                redil={resData.data!}
+                redil={redilDetails.data!}
                 apiUrl={API_URL}
             />
         ) : (
-            <section class="page-shell">
-                <div class="page-card">
-                    <h1 class="page-title">Error encontrando redil</h1>
-                    <p class="page-subtitle">
-                        {resData?.message ?? errorMessage}
-                    </p>
-                </div>
-            </section>
+            <ErrorCard message={redilDetails.error} />
         )
     }
 </Layout>
