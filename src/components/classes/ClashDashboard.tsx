@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import Pagination from "./Pagination";
-import { formatDateReadable } from "../lib/formatDate";
+import { usePaginatedFetch } from "../../hooks/usePaginatedFetch";
+import { formatDateReadable } from "../../lib/formatDate";
+import Pagination from "../Pagination";
 
 interface Props {
     initialClasses: PaginatedResponse<ClassDto[]>;
@@ -8,37 +8,12 @@ interface Props {
 }
 
 export default function ClassDashboard({ initialClasses, apiUrl }: Props) {
-    const [page, setPage] = useState(initialClasses.currentPage);
-    const [data, setData] = useState(initialClasses);
-    const [loading, setLoading] = useState(false);
-    const isFirstRender = useRef(true);
-
-    const fetchClasses = useCallback(async (currentPage: number) => {
-        setLoading(true);
-        try {
-            const params = new URLSearchParams({ page: String(currentPage) });
-            const res = await fetch(`${apiUrl}/api/class?${params}`);
-            const json = (await res.json()) as ApiResponse<PaginatedResponse<ClassDto[]>>;
-            if (json.success && json.data) setData(json.data);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    }, [apiUrl]);
-
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-
-        fetchClasses(page);
-
-        const params = new URLSearchParams();
-        if (page > 1) params.set("page", String(page));
-        window.history.replaceState({}, "", `/class${params.size ? `?${params}` : ""}`);
-    }, [page, fetchClasses]);
+    const { data, loading, setPage } = usePaginatedFetch({
+        initialData: initialClasses,
+        endpoint: "/api/class",
+        apiUrl,
+        basePath: "/class",
+    });
 
     return (
         <section className="page-shell">
