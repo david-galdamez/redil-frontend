@@ -1,49 +1,26 @@
 ---
-import AssistClassDetails from "../../components/AssistClassDetails";
+import AssistClassDetails from "../../components/classes/AssistClassDetails";
 import Layout from "../../layouts/Layout.astro";
+import { getRedilAssistInfo } from "../../lib/api/redil";
+import { API_URL } from "../../lib/api/client";
+import ErrorCard from "../../components/ui/ErrorCard.astro";
 
 export const prerender = false;
 
 const { assistToken } = Astro.params;
 
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+const assistDetails = await getRedilAssistInfo(assistToken!);
+if(assistDetails.status === 404) return Astro.redirect("/not-found");
+if(assistDetails.error) Astro.response.status = assistDetails.status;
 
-let resData: ApiResponse<AssisClassDetailDto> | null = null;
-let errorMessage = null;
-
-try {
-    const res = await fetch(`${API_URL}/api/class/assist/${assistToken}`);
-
-    if (!res.ok) {
-        if (res.status === 404) {
-            return Astro.redirect("/not-found");
-        }
-    } else {
-        resData = (await res.json()) as ApiResponse<AssisClassDetailDto>;
-
-        if(!resData.success) {
-            errorMessage = resData.message
-        }
-    }
-} catch (e) {
-    console.error("Error fetching class assist details: ", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
 ---
 
 <Layout>
     {
-        resData?.success ? (
-            <AssistClassDetails client:load apiUrl={API_URL}, assistClass={resData.data!} attendanceToken={assistToken!} />
+        assistDetails?.data ? (
+            <AssistClassDetails client:load apiUrl={API_URL}, assistClass={assistDetails.data!} attendanceToken={assistToken!} emails={assistDetails.data?.emails!} />
         ) : (
-            <section class="page-shell">
-                <div class="page-card">
-                    <h1 class="page-title">Error cargando pagina de asistencia</h1>
-                    <p class="page-subtitle">{errorMessage || "La pagina no existe o ya expiro."}</p>
-                </div>
-            </section>
+            <ErrorCard message={assistDetails.error} />
         )
     }
 </Layout>

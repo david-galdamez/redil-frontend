@@ -1,15 +1,16 @@
 ---
 import LoginForm from "../components/LoginForm";
 import Layout from "../layouts/Layout.astro";
-
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
+import { API_URL } from "../lib/api/client";
 ---
 
 <Layout>
     <section class="page-shell">
         <header class="page-header">
             <h1 class="page-title">Iniciar sesion</h1>
-            <p class="page-subtitle">Accede a tu cuenta para administrar tu informacion.</p>
+            <p class="page-subtitle">
+                Accede a tu cuenta para administrar tu informacion.
+            </p>
         </header>
         <LoginForm client:load apiUrl={API_URL} />
     </section>

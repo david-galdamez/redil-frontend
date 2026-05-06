@@ -1,53 +1,33 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import RedilRegisterForm from "../../../components/StudentRegisterForm.tsx";
+import RedilRegisterForm from "../../../components/student/StudentRegisterForm.tsx";
+import { getRedilByCode } from "../../../lib/api/redil";
+import { getGroups } from "../../../lib/api/groups";
+import { API_URL } from "../../../lib/api/client";
+import ErrorCard from "../../../components/ui/ErrorCard.astro";
 
 export const prerender = false;
 
 const { redilCode } = Astro.params;
-const API_URL = import.meta.env.PUBLIC_API_URL;
 
-let resData: ApiResponse<RedilDto> | null = null;
-let resGroups: ApiResponse<GroupDto[]> | null = null;
-let errorMessage = null;
+const [redils, groups] = await Promise.all([
+    getRedilByCode(redilCode!),
+    getGroups(),
+]);
 
-try {
-    const res = await fetch(`${API_URL}/api/redil/code/${redilCode}`);
-    const groupsRes = await fetch(`${API_URL}/api/groups`);
-
-    if (!res.ok) {
-        if (res.status === 404) {
-            return Astro.redirect("/not-found");
-        }
-        Astro.response.status = res.status;
-        errorMessage = `Error ${res.status}: ${res.statusText}`;
-    } else {
-        resData = (await res.json()) as ApiResponse<RedilDto>;
-    }
-
-    if (!groupsRes.ok) {
-        Astro.response.status = groupsRes.status;
-        errorMessage = `Error ${groupsRes.status}: ${groupsRes.statusText}`;
-    } else {
-        resGroups = (await groupsRes.json()) as ApiResponse<GroupDto[]>;
-    }
-} catch (e) {
-    console.error("Error fetching redil data:", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
+if (redils.status === 404) return Astro.redirect("/not-found");
+if (redils.error) Astro.response.status = redils.status;
 ---
 
 <Layout>
     {
-        resData?.success ? (
+        redils?.data ? (
             <section class="page-shell">
                 <header class="page-header">
                     <h1 class="page-title">
-                        Inscripcion a {resData?.data?.name}
+                        Inscripcion a {redils?.data?.name}
                     </h1>
-                    <p class="page-subtitle">{resData?.data?.description}</p>
+                    <p class="page-subtitle">{redils?.data?.description}</p>
                 </header>
 
                 <div class="page-card form-card-compact mb-4">
@@ -56,9 +36,6 @@ try {
                             Completa el formulario para registrar tu asistencia
                             al redil.
                         </p>
-                        {/* <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
-                            {resGroups?.data?.length || 0} grupos disponibles
-                        </span> */}
                     </div>
                 </div>
 
@@ -66,18 +43,11 @@ try {
                     client:load
                     redilCode={redilCode || ""}
                     apiUrl={API_URL}
-                    groups={resGroups?.data || []}
+                    groups={groups?.data || []}
                 />
             </section>
         ) : (
-            <section class="page-shell">
-                <div class="page-card">
-                    <h1 class="page-title">Error encontrando redil</h1>
-                    <p class="page-subtitle">
-                        {resData?.message ?? errorMessage}
-                    </p>
-                </div>
-            </section>
+            <ErrorCard message={redils.error} />
         )
     }
 </Layout>

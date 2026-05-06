@@ -1,57 +1,31 @@
 ---
-import ClassDetails from "../../components/ClassDetails";
+import ClassDetails from "../../components/classes/ClassDetails";
+import ErrorCard from "../../components/ui/ErrorCard.astro";
 import Layout from "../../layouts/Layout.astro";
+import { getClassDetails } from "../../lib/api/class";
+import { API_URL } from "../../lib/api/client";
 
 export const prerender = false;
 
-const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000";
-
 const { id } = Astro.params;
+const cookie = Astro.request.headers.get("cookie");
 
-let resData: ApiResponse<ClassDetailsDto> | null = null;
-let errorMessage = null;
+const classDetails = await getClassDetails(id!, cookie);
 
-try {
-    const res = await fetch(`${API_URL}/api/class/${id}`, {
-        headers: {
-            cookie: Astro.request.headers.get("cookie") || "",
-        },
-    });
-
-    if (!res.ok) {
-        if (res.status === 404) {
-            return Astro.redirect("/not-found");
-        }
-        Astro.response.status = res.status;
-        errorMessage = `Error ${res.status}: ${res.statusText}`;
-    } else {
-        resData = (await res.json()) as ApiResponse<ClassDetailsDto>;
-    }
-} catch (e) {
-    console.error("Error fetching redil data:", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
+if (classDetails.status === 404) return Astro.redirect("/not-found");
+if (classDetails.error) Astro.response.status = classDetails.status;
 ---
 
 <Layout>
     {
-        resData?.success ? (
+        classDetails?.data ? (
             <ClassDetails
                 client:only
                 apiUrl={API_URL}
-                classDetails={resData.data!}
+                classDetails={classDetails.data!}
             />
         ) : (
-            <section class="page-shell">
-                <div class="page-card">
-                    <h1 class="page-title">Error encontrando clase</h1>
-                    <p class="page-subtitle">
-                        {resData?.message ?? errorMessage}
-                    </p>
-                </div>
-            </section>
+            <ErrorCard message={classDetails.error} />
         )
     }
 </Layout>

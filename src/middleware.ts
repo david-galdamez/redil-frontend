@@ -3,13 +3,8 @@ import type { Locals } from "astro";
 import { getRoleRute, isPublicRoute } from "./lib/authHelper";
 import { publicRoutes, roleRoutes } from "./lib/authConfig";
 import { jwtDecode } from "jwt-decode";
+import type { JwtUser } from "./types/user";
 
-type JwtUser = {
-    id: string;
-    email: string;
-    role: string;
-    redil_id?: string
-}
 
 export const onRequest = defineMiddleware(async (context, next) => {
     const { redirect, url, cookies } = context
@@ -50,7 +45,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
 
     if (user && isLogin) {
-        return redirect("/dashboard");
+        return user.role === "Admin"
+            ? redirect("/")
+            : redirect("/my-redil");
+    }
+
+    if (user && user.role === "Maestro" && pathname === "/") {
+        return redirect("/my-redil");
     }
 
     return next();

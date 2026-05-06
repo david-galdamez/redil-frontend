@@ -9,6 +9,7 @@ export interface UserDto {
 export interface JwtUser {
     id: string;
     email: string;
+    name: string;
     role: string;
     redil_id?: string
 }

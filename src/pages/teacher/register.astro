@@ -1,40 +1,27 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import RegisterTeacherForm from "../../components/RegisterTeacherForm.tsx";
+import RegisterTeacherForm from "../../components/teachers/RegisterTeacherForm.tsx";
+import { getRedilsList } from "../../lib/api/redil";
+import { API_URL } from "../../lib/api/client";
 
 export const prerender = false;
 
-const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
-
-let resRedils: ApiResponse<RedilListDto[]> | null = null;
-let errorMessage = null;
-
-try {
-    const res = await fetch(`${API_URL}/api/redil`);
-    if (!res.ok) {
-        Astro.response.status = res.status;
-        errorMessage = `Error ${res.status}: ${res.statusText}`;
-    } else {
-        resRedils = (await res.json()) as ApiResponse<RedilListDto[]>;
-    }
-} catch (e) {
-    console.error("Error fetching data:", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
+const redils = await getRedilsList();
+if (redils.error) Astro.response.status = redils.status;
 ---
 
 <Layout>
     <section class="page-shell">
         <header class="page-header">
             <h1 class="page-title">Registrar profesor</h1>
-            <p class="page-subtitle">Completa el formulario para crear una cuenta docente.</p>
+            <p class="page-subtitle">
+                Completa el formulario para crear una cuenta docente.
+            </p>
         </header>
         <RegisterTeacherForm
             client:load
             apiUrl={API_URL}
-            rediles={resRedils?.data || []}
+            rediles={redils?.data! || []}
         />
     </section>
 </Layout>

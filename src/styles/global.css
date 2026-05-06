@@ -7,46 +7,6 @@
 }
 
 @layer components {
-  .app-navbar {
-    @apply sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur;
-  }
-
-  .app-navbar-content {
-    @apply mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8;
-  }
-
-  .app-navbar-left {
-    @apply flex items-center gap-3;
-  }
-
-  .app-navbar-brand {
-    @apply text-base font-semibold text-slate-900 no-underline;
-  }
-
-  .app-role-chip {
-    @apply rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700;
-  }
-
-  .app-navbar-links {
-    @apply order-3 flex w-full flex-wrap items-center gap-2 sm:order-2 sm:w-auto;
-  }
-
-  .app-navbar-link {
-    @apply rounded-lg px-3 py-2 text-sm font-medium text-slate-600 no-underline transition hover:bg-slate-100 hover:text-slate-900;
-  }
-
-  .app-navbar-link-active {
-    @apply bg-blue-50 text-blue-700;
-  }
-
-  .app-navbar-actions {
-    @apply order-2 ml-auto flex items-center gap-2 sm:order-3;
-  }
-
-  .app-action-button {
-    @apply px-3 py-2;
-  }
-
   .page-shell {
     @apply mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8;
   }
@@ -159,4 +119,13 @@
   .pagination-ellipsis {
     @apply px-1 text-sm text-slate-500;
   }
+
+  .pagination-btn {
+    @apply px-3 py-1.5 text-sm rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .pagination-btn-active {
+    @apply bg-slate-900 text-white border-slate-900 hover:bg-slate-800;
+  }
+
 }

@@ -1,105 +1,35 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { formatDateReadable } from "../lib/formatDate";
-import Pagination from "../components/Pagination.astro";
+import ErrorCard from "../components/ui/ErrorCard.astro";
+import { getClasses } from "../lib/api/class";
+import { API_URL } from "../lib/api/client";
+import ClassDashboard from "../components/classes/ClashDashboard";
 
-const API_URL = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000";
-const requestedPageParam = Number(Astro.url.searchParams.get("page") ?? "1");
-const requestedPage =
-    Number.isFinite(requestedPageParam) && requestedPageParam > 0
-        ? Math.floor(requestedPageParam)
-        : 1;
+export const prerender = false;
 
-let resData: ApiResponse<PaginatedResponse<ClassDto[]>> | null = null;
-let errorMessage = null;
-let paginatedClasses: PaginatedResponse<ClassDto[]> | null = null;
+const cookie = Astro.request.headers.get("cookie");
+const requestedPage = Math.max(
+    1,
+    Number(Astro.url.searchParams.get("page") ?? "1") || 1,
+);
 
-try {
-    const res = await fetch(`${API_URL}/api/class?page=${requestedPage}`, {
-        headers: {
-            cookie: Astro.request.headers.get("cookie") || "",
-        },
-    });
-
-    if (!res.ok) {
-        Astro.response.status = res.status;
-        errorMessage = `Error ${res.status}: ${res.statusText}`;
-    } else {
-        resData = (await res.json()) as ApiResponse<PaginatedResponse<ClassDto[]>>;
-        paginatedClasses = resData.data ?? null;
-    }
-} catch (e) {
-    console.error("Error fetching class data:", e);
-    Astro.response.status = 500;
-    errorMessage =
-        "Error conectando al servidor. Por favor, intenta nuevamente más tarde.";
-}
+const { data, error, status } = await getClasses(
+    cookie,
+    new URLSearchParams({ page: String(requestedPage) }),
+);
+if (error) Astro.response.status = status;
 ---
 
 <Layout>
     {
-        resData?.success ? (
-            <section class="page-shell">
-                <header class="page-header">
-                    <h1 class="page-title">Dashboard de clases</h1>
-                    <p class="page-subtitle">
-                        Gestiona clases registradas, revisa su informacion y
-                        controla asistencia.
-                    </p>
-                    <p class="text-sm text-slate-500">
-                        Pagina {paginatedClasses?.currentPage ?? requestedPage} de {paginatedClasses?.totalPages ?? 1}
-                        {" - "}
-                        {paginatedClasses?.totalRecords ?? 0} clases en total ({paginatedClasses?.pageSize ?? 10} por pagina)
-                    </p>
-                </header>
-                <div class="card-grid card-grid-balanced">
-                    {paginatedClasses?.data && paginatedClasses.data.length > 0 ? (
-                        paginatedClasses.data.map((c) => (
-                            <article
-                                class="item-card item-card-balanced"
-                                onclick={`window.location.href='/class/${c.id}'`}
-                            >
-                                <h2 class="text-lg font-semibold text-slate-900">
-                                    {c.redilName}
-                                </h2>
-                                <p class="text-sm text-slate-600 wrap-break-word">
-                                    {c.description}
-                                </p>
-                                <p class="mt-auto text-sm font-medium text-slate-500">
-                                    {formatDateReadable(c.classDate)}
-                                </p>
-                            </article>
-                        ))
-                    ) : (
-                        <p class="text-sm text-slate-600">
-                            No hay clases registradas
-                        </p>
-                    )}
-                </div>
-                <Pagination
-                    currentPage={paginatedClasses?.currentPage ?? requestedPage}
-                    totalPages={paginatedClasses?.totalPages ?? 1}
-                    basePath="/class"
-                    query={Astro.url.searchParams}
-                />
-                <div class="mt-6">
-                    <button
-                        class="btn-primary w-full sm:w-fit"
-                        onclick={`window.location.href='/class/register'`}
-                    >
-                        Registrar clase
-                    </button>
-                </div>
-            </section>
+        data ? (
+            <ClassDashboard
+                client:load
+                initialClasses={data}
+                apiUrl={API_URL}
+            />
         ) : (
-            <section class="page-shell">
-                <div class="page-card">
-                    <h1 class="page-title">Error cargando clases</h1>
-                    <p class="page-subtitle">
-                        {errorMessage || "No se pudieron cargar las clases."}
-                    </p>
-                </div>
-            </section>
+            <ErrorCard title="Error cargando clases" message={error} />
         )
     }
 </Layout>
