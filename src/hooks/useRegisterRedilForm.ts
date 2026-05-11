@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "@pheralb/toast";
+import { navigate } from "astro/virtual-modules/transitions-router.js";
 
 const initialForm = { name: "", description: "" };
 const initialErrors = { name: "", description: "", general: "" };
@@ -44,6 +45,7 @@ export function useRegisterRedilForm(apiUrl: string) {
             }
 
             toast.success({ text: data.message || "Registro exitoso" });
+            navigate("/redil");
             setForm(initialForm);
         } catch (e) {
             console.error("Error registering redil:", e);

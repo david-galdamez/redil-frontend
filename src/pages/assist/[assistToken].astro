@@ -20,7 +20,7 @@ if(assistDetails.error) Astro.response.status = assistDetails.status;
         assistDetails?.data ? (
             <AssistClassDetails client:load apiUrl={API_URL}, assistClass={assistDetails.data!} attendanceToken={assistToken!} emails={assistDetails.data?.emails!} />
         ) : (
-            <ErrorCard message={assistDetails.error} />
+            <ErrorCard message={assistDetails.error} status={assistDetails.status} />
         )
     }
 </Layout>

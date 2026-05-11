@@ -47,7 +47,7 @@ if (redils.error) Astro.response.status = redils.status;
                 />
             </section>
         ) : (
-            <ErrorCard message={redils.error} />
+            <ErrorCard message={redils.error} status={redils.status} />
         )
     }
 </Layout>

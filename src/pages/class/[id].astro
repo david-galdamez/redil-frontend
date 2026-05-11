@@ -25,7 +25,10 @@ if (classDetails.error) Astro.response.status = classDetails.status;
                 classDetails={classDetails.data!}
             />
         ) : (
-            <ErrorCard message={classDetails.error} />
+            <ErrorCard
+                message={classDetails.error}
+                status={classDetails.status}
+            />
         )
     }
 </Layout>

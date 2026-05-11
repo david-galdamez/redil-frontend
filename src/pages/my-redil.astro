@@ -32,7 +32,10 @@ if (redilDetails.error) Astro.response.status = redilDetails.status;
                 apiUrl={API_URL}
             />
         ) : (
-            <ErrorCard message={redilDetails.error} />
+            <ErrorCard
+                message={redilDetails.error}
+                status={redilDetails.status}
+            />
         )
     }
 </Layout>

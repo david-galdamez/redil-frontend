@@ -17,7 +17,7 @@ if (profile.error) Astro.response.status = profile.status;
         profile.data ? (
             <ProfileDetails client:load user={profile.data!} apiUrl={API_URL} />
         ) : (
-            <ErrorCard message={profile.error} />
+            <ErrorCard message={profile.error} status={profile.status} />
         )
     }
 </Layout>

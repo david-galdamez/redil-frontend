@@ -40,7 +40,7 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
                 </p>
             )}
 
-            {stats.length > 0 && (
+            {!loading && stats.length > 0 && (
                 <StatsTable
                     stats={stats}
                     page={page}

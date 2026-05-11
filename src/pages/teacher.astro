@@ -31,7 +31,11 @@ if (error) Astro.response.status = status;
                 apiUrl={API_URL}
             />
         ) : (
-            <ErrorCard title="Error cargando profesores" message={error} />
+            <ErrorCard
+                title="Error cargando profesores"
+                message={error}
+                status={status}
+            />
         )
     }
 </Layout>

@@ -1,16 +1,68 @@
 ---
+import "../../styles/errorCard.css";
+
 interface Props {
     title?: string;
     message?: string | null;
+    status?: number;
+    retryHref?: string;
 }
-const { title = "Error cargando datos", message } = Astro.props;
+
+const ERROR_MAP: Record<
+    number,
+    { title: string; message: string; icon: string; color: string }
+> = {
+    401: {
+        title: "No tienes acceso a este contenido",
+        message:
+            "Tu sesión puede haber expirado. Vuelve a iniciar sesión para continuar.",
+        icon: "ti-lock",
+        color: "danger",
+    },
+    403: {
+        title: "No tienes permiso para ver esto",
+        message: "Contacta a un administrador si crees que es un error.",
+        icon: "ti-shield-off",
+        color: "danger",
+    },
+    404: {
+        title: "No encontramos lo que buscas",
+        message: "Es posible que haya sido eliminado o movido.",
+        icon: "ti-file-off",
+        color: "warning",
+    },
+    500: {
+        title: "Algo salió mal",
+        message:
+            "Hubo un problema con el servidor. Intenta de nuevo en unos momentos.",
+        icon: "ti-alert-triangle",
+        color: "warning",
+    },
+};
+
+const { status, retryHref } = Astro.props;
+
+const error = (status ? ERROR_MAP[status] : null) ?? {
+    title: Astro.props.title ?? "Ocurrió un error inesperado",
+    message: Astro.props.message ?? "Intenta de nuevo más tarde.",
+    icon: "ti-circle-x",
+    color: "danger",
+};
 ---
 
-<section class="page-shell">
-    <div class="page-card">
-        <h1 class="page-title">{title}</h1>
-        <p class="page-subtitle">
-            {message || "Ocurrió un error inesperado. Intenta más tarde."}
-        </p>
+<section class="error-shell">
+    <div class="error-card">
+        <div class={`error-icon-wrap error-icon-wrap--${error.color}`}>
+            <i class={`ti ${error.icon}`} aria-hidden="true"></i>
+        </div>
+        <h1 class="error-title">{error.title}</h1>
+        <p class="error-message">{error.message}</p>
+        {
+            retryHref && (
+                <a href={retryHref} class="error-btn">
+                    Reintentar
+                </a>
+            )
+        }
     </div>
 </section>

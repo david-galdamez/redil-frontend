@@ -32,7 +32,7 @@ if (redilList.error) Astro.response.status = redilList.status;
                 </div>
             </section>
         ) : (
-            <ErrorCard message={redilList.error} />
+            <ErrorCard message={redilList.error} status={redilList.status} />
         )
     }
 </Layout>

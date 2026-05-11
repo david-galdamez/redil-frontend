@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "@pheralb/toast";
 import { validatePassword } from "../lib/validatePassword";
+import { navigate } from "astro/virtual-modules/transitions-router.js";
 
 const initialForm = { name: "", email: "", password: "", redilId: 0 };
 const initialErrors = { name: "", email: "", password: "", redilId: "", general: "" };
@@ -58,6 +59,7 @@ export function useRegisterTeacherForm(apiUrl: string) {
             }
 
             toast.success({ text: data.message || "Registro exitoso" });
+            navigate("/teacher");
             setForm(initialForm);
         } catch (e) {
             console.error("Error registering teacher:", e);

@@ -1,0 +1,79 @@
+.error-shell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1rem;
+}
+
+.error-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    max-width: 420px;
+    width: 100%;
+}
+
+.error-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.error-icon-wrap--danger {
+    background: #fef2f2;
+}
+
+.error-icon-wrap--danger i {
+    font-size: 26px;
+    color: #dc2626;
+}
+
+.error-icon-wrap--warning {
+    background: #fffbeb;
+}
+
+.error-icon-wrap--warning i {
+    font-size: 26px;
+    color: #d97706;
+}
+
+.error-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.error-message {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.error-btn {
+    margin-top: 8px;
+    padding: 8px 24px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.error-btn:hover {
+    background: #f9fafb;
+}

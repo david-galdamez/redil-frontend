@@ -30,7 +30,7 @@ if (teacher.error) Astro.response.status = teacher.status;
                 apiUrl={API_URL}
             />
         ) : (
-            <ErrorCard message={teacher.error} />
+            <ErrorCard message={teacher.error} status={teacher.status} />
         )
     }
 </Layout>
