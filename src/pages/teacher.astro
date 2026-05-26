@@ -8,7 +8,6 @@ import { API_URL } from "../lib/api/client";
 export const prerender = false;
 
 const cookie = Astro.request.headers.get("cookie");
-
 const requestedPage = Math.max(
     1,
     Number(Astro.url.searchParams.get("page") ?? "1") || 1,
@@ -16,26 +15,29 @@ const requestedPage = Math.max(
 const search = Astro.url.searchParams.get("search") ?? "";
 const params = new URLSearchParams({ page: String(requestedPage) });
 if (search) params.set("search", search);
-
 const { data, error, status } = await getTeachers(cookie, params);
 if (error) Astro.response.status = status;
 ---
 
 <Layout>
-    {
-        data ? (
-            <TeacherDashboard
-                client:load
-                initialTeachers={data}
-                initialSearch={search}
-                apiUrl={API_URL}
-            />
-        ) : (
-            <ErrorCard
-                title="Error cargando profesores"
-                message={error}
-                status={status}
-            />
-        )
-    }
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        {
+            data ? (
+                <TeacherDashboard
+                    client:load
+                    initialTeachers={data}
+                    initialSearch={search}
+                    apiUrl={API_URL}
+                />
+            ) : (
+                <div class="max-w-2xl mx-auto">
+                    <ErrorCard
+                        title="Error cargando profesores"
+                        message={error}
+                        status={status}
+                    />
+                </div>
+            )
+        }
+    </div>
 </Layout>

@@ -5,13 +5,27 @@ import { API_URL } from "../lib/api/client";
 ---
 
 <Layout>
-    <section class="page-shell">
-        <header class="page-header">
-            <h1 class="page-title">Iniciar sesion</h1>
-            <p class="page-subtitle">
-                Accede a tu cuenta para administrar tu informacion.
-            </p>
-        </header>
-        <LoginForm client:load apiUrl={API_URL} />
-    </section>
+    <div
+        class="min-h-screen bg-[#F4F6F9] flex flex-col justify-center items-center p-4"
+    >
+        <div
+            class="w-full max-w-md bg-white rounded-2xl p-8 shadow-md border border-gray-100"
+        >
+            <header class="text-center mb-6">
+                <div
+                    class="inline-flex items-center justify-center bg-[#003366] text-white font-black text-xl px-4 py-2 rounded-xl mb-4 tracking-wider"
+                >
+                    CO<br />MU
+                </div>
+                <h1 class="text-2xl font-bold text-[#003366]">
+                    Iniciar sesión
+                </h1>
+                <p class="text-sm text-gray-500 mt-1">
+                    Accede a tu cuenta para administrar tu información.
+                </p>
+            </header>
+
+            <LoginForm client:load apiUrl={API_URL} />
+        </div>
+    </div>
 </Layout>

@@ -17,18 +17,26 @@ if (classDetails.error) Astro.response.status = classDetails.status;
 ---
 
 <Layout>
-    {
-        classDetails?.data ? (
-            <ClassDetails
-                client:only
-                apiUrl={API_URL}
-                classDetails={classDetails.data!}
-            />
-        ) : (
-            <ErrorCard
-                message={classDetails.error}
-                status={classDetails.status}
-            />
-        )
-    }
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-5xl mx-auto">
+            {
+                classDetails?.data ? (
+                    <div class="w-full">
+                        <ClassDetails
+                            client:only
+                            apiUrl={API_URL}
+                            classDetails={classDetails.data!}
+                        />
+                    </div>
+                ) : (
+                    <div class="max-w-2xl mx-auto">
+                        <ErrorCard
+                            message={classDetails.error}
+                            status={classDetails.status}
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
 </Layout>

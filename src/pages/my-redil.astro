@@ -5,12 +5,10 @@ import type { Locals } from "astro";
 import { API_URL } from "../lib/api/client";
 import { getRedilDetails } from "../lib/api/redil";
 import ErrorCard from "../components/ui/ErrorCard.astro";
-
 export const prerender = false;
 
 const user = (Astro.locals as Locals).user;
 const cookie = Astro.request.headers.get("cookie");
-
 if (!user) {
     return (Astro.response.status = 401);
 } else if (!user.redil_id) {
@@ -23,19 +21,25 @@ if (redilDetails.error) Astro.response.status = redilDetails.status;
 ---
 
 <Layout>
-    {
-        redilDetails?.data ? (
-            <RedilDetailsTeachers
-                client:only
-                id={user.redil_id!}
-                redil={redilDetails.data!}
-                apiUrl={API_URL}
-            />
-        ) : (
-            <ErrorCard
-                message={redilDetails.error}
-                status={redilDetails.status}
-            />
-        )
-    }
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        {
+            redilDetails?.data ? (
+                <div class="w-full">
+                    <RedilDetailsTeachers
+                        client:only
+                        id={user.redil_id!}
+                        redil={redilDetails.data!}
+                        apiUrl={API_URL}
+                    />
+                </div>
+            ) : (
+                <div class="max-w-2xl mx-auto mt-8">
+                    <ErrorCard
+                        message={redilDetails.error}
+                        status={redilDetails.status}
+                    />
+                </div>
+            )
+        }
+    </div>
 </Layout>

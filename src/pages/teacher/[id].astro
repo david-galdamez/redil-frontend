@@ -20,17 +20,28 @@ if (teacher.error) Astro.response.status = teacher.status;
 ---
 
 <Layout>
-    {
-        teacher.data ? (
-            <TeacherDetails
-                client:load
-                id={id!}
-                teacher={teacher.data!}
-                redils={redils.data || []}
-                apiUrl={API_URL}
-            />
-        ) : (
-            <ErrorCard message={teacher.error} status={teacher.status} />
-        )
-    }
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-5xl mx-auto">
+            {
+                teacher.data ? (
+                    <div class="w-full">
+                        <TeacherDetails
+                            client:load
+                            id={id! ?? ""}
+                            teacher={teacher.data!}
+                            redils={redils.data || []}
+                            apiUrl={API_URL}
+                        />
+                    </div>
+                ) : (
+                    <div class="max-w-2xl mx-auto">
+                        <ErrorCard
+                            message={teacher.error}
+                            status={teacher.status}
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
 </Layout>

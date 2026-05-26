@@ -16,46 +16,52 @@ export default function ClassDashboard({ initialClasses, apiUrl }: Props) {
     });
 
     return (
-        <section className="page-shell">
-            <header className="page-header">
-                <h1 className="page-title">Dashboard de clases</h1>
-                <p className="page-subtitle">
+        <section className="space-y-6">
+            <header className="mb-4">
+                <h1 className="text-2xl md:text-3xl font-bold text-[#003366]">Dashboard de clases</h1>
+                <p className="text-sm text-gray-500 mt-1">
                     Gestiona clases registradas, revisa su información y controla asistencia.
                 </p>
-                <p className="text-sm text-slate-500">
+                <div className="inline-block mt-3 bg-white border border-gray-100 rounded-xl px-4 py-2 shadow-sm text-xs text-gray-500 font-medium">
                     Página {data.currentPage} de {data.totalPages} —{" "}
                     {data.totalRecords} clases ({data.pageSize} por página)
-                </p>
+                </div>
             </header>
 
-            <div className={`card-grid card-grid-balanced transition-opacity ${loading ? "opacity-50" : ""}`}>
+            <div className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200 ${loading ? "opacity-50" : ""}`}>
                 {data.data.length > 0 ? (
                     data.data.map(c => (
                         <article
                             key={c.id}
-                            className="item-card item-card-balanced cursor-pointer"
+                            className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#003366]/30 cursor-pointer flex flex-col gap-3 transition-all group"
                             onClick={() => window.location.href = `/class/${c.id}`}
                         >
-                            <h2 className="text-lg font-semibold text-slate-900">{c.redilName}</h2>
-                            <p className="text-sm text-slate-600 wrap-break-word">{c.description}</p>
-                            <p className="mt-auto text-sm font-medium text-slate-500">
+                            <h2 className="text-lg font-bold text-gray-900 group-hover:text-[#003366] transition-colors">{c.redilName}</h2>
+                            <p className="text-sm text-gray-600 break-words line-clamp-3">{c.description}</p>
+                            <p className="mt-auto pt-3 border-t border-gray-50 text-xs font-semibold text-gray-400 flex items-center gap-2">
+                                <i className="ti ti-calendar" aria-hidden="true"></i>
                                 {formatDateReadable(c.classDate)}
                             </p>
                         </article>
                     ))
                 ) : (
-                    <p className="text-sm text-slate-600">No hay clases registradas</p>
+                    <div className="col-span-full py-10 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                        <p className="text-sm text-gray-500 font-medium">No hay clases registradas</p>
+                    </div>
                 )}
             </div>
 
-            <Pagination
-                currentPage={data.currentPage}
-                totalPages={data.totalPages}
-                onPageChange={setPage}
-            />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-gray-100">
+                <Pagination
+                    currentPage={data.currentPage}
+                    totalPages={data.totalPages}
+                    onPageChange={setPage}
+                />
 
-            <div className="mt-6">
-                <a href="/class/register" className="btn-primary w-full sm:w-fit">
+                <a
+                    href="/class/register"
+                    className="w-full sm:w-fit text-center bg-[#003366] hover:bg-[#002244] text-white font-medium py-2.5 px-6 rounded-xl text-sm shadow-sm transition-colors block"
+                >
                     Registrar clase
                 </a>
             </div>

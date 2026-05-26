@@ -37,25 +37,27 @@ export default function EmailAutocomplete({ value, emails, onChange, onSelect, e
         if (!suggestions.length) return;
         if (e.key === "ArrowDown") {
             e.preventDefault();
-            setActiveSuggestion(i => Math.min(i + 1, suggestions.length - 1));
+            setActiveSuggestion(i => Math.min(suggestions.length - 1, i + 1));
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
-            setActiveSuggestion(i => Math.max(i - 1, 0));
-        } else if (e.key === "Enter" && activeSuggestion >= 0) {
-            e.preventDefault();
-            selectSuggestion(suggestions[activeSuggestion]);
+            setActiveSuggestion(i => Math.max(0, i - 1));
+        } else if (e.key === "Enter") {
+            if (activeSuggestion >= 0) {
+                e.preventDefault();
+                selectSuggestion(suggestions[activeSuggestion]);
+            }
         } else if (e.key === "Escape") {
             setSuggestions([]);
+            setActiveSuggestion(-1);
         }
     };
 
     return (
-        <div className="field-group">
-            <label className="label-base" htmlFor="email">Correo del estudiante</label>
-            <div className="relative">
+        <div className="flex flex-col gap-1.5 w-full">
+            <div className="relative w-full">
                 <input
                     ref={inputRef}
-                    className="input-base w-full"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800"
                     type="email"
                     name="email"
                     id="email"
@@ -67,13 +69,13 @@ export default function EmailAutocomplete({ value, emails, onChange, onSelect, e
                     onBlur={() => setTimeout(() => setSuggestions([]), 150)}
                 />
                 {suggestions.length > 0 && (
-                    <ul className="absolute z-50 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg overflow-hidden">
+                    <ul className="absolute z-50 mt-1.5 w-full rounded-xl border border-gray-100 bg-white shadow-lg overflow-hidden divide-y divide-gray-50">
                         {suggestions.map((email, i) => (
                             <li
                                 key={email}
-                                className={`px-3 py-2 text-sm cursor-pointer transition-colors ${i === activeSuggestion
-                                        ? "bg-slate-100 text-slate-900"
-                                        : "text-slate-700 hover:bg-slate-50"
+                                className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${i === activeSuggestion
+                                        ? "bg-blue-50 text-[#003366] font-medium"
+                                        : "text-gray-700 hover:bg-gray-50"
                                     }`}
                                 onMouseDown={() => selectSuggestion(email)}
                             >
@@ -83,7 +85,7 @@ export default function EmailAutocomplete({ value, emails, onChange, onSelect, e
                     </ul>
                 )}
             </div>
-            {error && <p className="error-text">{error}</p>}
+            {error && <p className="text-xs font-medium text-red-600 mt-1">{error}</p>}
         </div>
     );
 }

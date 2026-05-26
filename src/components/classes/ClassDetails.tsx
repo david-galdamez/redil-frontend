@@ -14,17 +14,17 @@ export default function ClassDetails({ apiUrl, classDetails }: Props) {
         : null;
 
     return (
-        <section className="page-shell">
-            <header className="page-header">
-                <h1 className="page-title">Detalles de clase</h1>
-                <p className="page-subtitle">Información general y control de asistencia.</p>
+        <section className="space-y-6">
+            <header className="mb-4">
+                <h1 className="text-2xl md:text-3xl font-bold text-[#003366]">Detalles de clase</h1>
+                <p className="text-sm text-gray-500 mt-1">Información general y control de asistencia.</p>
             </header>
 
-            <div className="page-card space-y-4">
-                <div className="field-group">
-                    <label className="label-base" htmlFor="description">Descripción de la clase</label>
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-5">
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-gray-700" htmlFor="description">Descripción de la clase</label>
                     <textarea
-                        className="input-base min-h-24"
+                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 min-h-[96px] resize-y opacity-90 cursor-not-allowed"
                         name="description"
                         id="description"
                         defaultValue={classDetails.classDescription}
@@ -32,10 +32,10 @@ export default function ClassDetails({ apiUrl, classDetails }: Props) {
                     />
                 </div>
 
-                <div className="field-group">
-                    <label className="label-base" htmlFor="date">Fecha de la clase</label>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-gray-700" htmlFor="date">Fecha de la clase</label>
                     <input
-                        className="input-base"
+                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 opacity-90 cursor-not-allowed"
                         type="datetime-local"
                         name="date"
                         id="date"
@@ -45,19 +45,23 @@ export default function ClassDetails({ apiUrl, classDetails }: Props) {
                 </div>
 
                 {assistLink && (
-                    <AttendanceLinkCard
-                        assistLink={assistLink}
-                        expired={classDetails.expired}
-                    />
+                    <div className="pt-2">
+                        <AttendanceLinkCard
+                            assistLink={assistLink}
+                            expired={classDetails.expired}
+                        />
+                    </div>
                 )}
 
-                <button
-                    className="btn-primary w-full sm:w-fit"
-                    onClick={passAssist}
-                    disabled={classDetails.attendanceToken !== null || classDetails.expired || loading}
-                >
-                    {loading ? "Iniciando..." : "Iniciar asistencia"}
-                </button>
+                <div className="pt-4 border-t border-gray-50">
+                    <button
+                        className="w-full sm:w-fit bg-[#003366] hover:bg-[#002244] text-white font-medium py-2.5 px-6 rounded-xl text-sm shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={passAssist}
+                        disabled={classDetails.attendanceToken !== null || classDetails.expired || loading}
+                    >
+                        {loading ? "Iniciando..." : "Iniciar asistencia"}
+                    </button>
+                </div>
             </div>
         </section>
     );

@@ -20,33 +20,46 @@ export default function RedilDetailsTeacher({ id, redil, apiUrl }: Props) {
     const redilLink = `${window.location.origin}/redil/student/${redil.redilCode}`;
 
     return (
-        <section className="page-shell">
-            <header className="page-header">
-                <h1 className="page-title">Detalles del redil</h1>
+        <section className="space-y-6">
+            <header className="mb-4">
+                <h1 className="text-2xl md:text-3xl font-bold text-[#003366]">Detalles del redil</h1>
+                <p className="text-sm text-gray-500 mt-1">Gestión de tu redil asignado.</p>
             </header>
 
-            <div className="page-card space-y-4">
-                <div className="field-group">
-                    <label className="label-base">Nombre</label>
-                    <input className="input-base" value={redil.name} disabled />
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-5">
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-gray-700">Nombre</label>
+                    <input
+                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 disabled:opacity-75 disabled:cursor-not-allowed"
+                        value={redil.name}
+                        disabled
+                    />
                 </div>
 
-                <div className="field-group">
-                    <label className="label-base">Descripción</label>
-                    <textarea className="input-base min-h-24" value={redil.description} disabled />
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-gray-700">Descripción</label>
+                    <textarea
+                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 min-h-[96px] resize-none disabled:opacity-75 disabled:cursor-not-allowed"
+                        value={redil.description}
+                        disabled
+                    />
                 </div>
 
-                <LinkCard label="Link de asistencia:" link={redilLink} />
+                <div className="pt-2">
+                    <LinkCard label="Link de asistencia:" link={redilLink} />
+                </div>
 
-                <RedilTabs
-                    tabs={TAB_LIST}
-                    renderTab={activeTab => (
-                        <>
-                            {activeTab === Tabs.Stats && <TeacherStats apiUrl={apiUrl} redilId={id} />}
-                            {activeTab === Tabs.Students && <StudentsTab redilId={id} apiUrl={apiUrl} />}
-                        </>
-                    )}
-                />
+                <div className="pt-4 border-t border-gray-50">
+                    <RedilTabs
+                        tabs={TAB_LIST}
+                        renderTab={activeTab => (
+                            <div className="mt-4">
+                                {activeTab === Tabs.Stats && <TeacherStats apiUrl={apiUrl} redilId={id} />}
+                                {activeTab === Tabs.Students && <StudentsTab redilId={id} apiUrl={apiUrl} />}
+                            </div>
+                        )}
+                    />
+                </div>
             </div>
         </section>
     );

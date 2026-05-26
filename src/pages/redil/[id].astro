@@ -17,16 +17,27 @@ if (redil.error) Astro.response.status = redil.status;
 ---
 
 <Layout>
-    {
-        redil?.data ? (
-            <RedilDetails
-                client:only
-                id={id!}
-                redil={redil.data!}
-                apiUrl={API_URL}
-            />
-        ) : (
-            <ErrorCard message={redil.error} status={redil.status} />
-        )
-    }
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            {
+                redil?.data ? (
+                    <div class="w-full">
+                        <RedilDetails
+                            client:only
+                            id={id! ?? ""}
+                            redil={redil.data!}
+                            apiUrl={API_URL}
+                        />
+                    </div>
+                ) : (
+                    <div class="max-w-2xl mx-auto">
+                        <ErrorCard
+                            message={redil.error}
+                            status={redil.status}
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
 </Layout>

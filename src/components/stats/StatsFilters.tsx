@@ -7,34 +7,37 @@ interface Props {
 }
 
 export default function StatsFilters({ filters, groups, rediles, isAdmin, onChange }: Props) {
+    const inputClasses = "w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:ring-1 focus:ring-[#003366] transition-all text-gray-800 appearance-none";
+    const labelClasses = "text-xs font-semibold text-gray-600 mb-1 block";
+
     return (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
-            <div className="flex flex-wrap gap-3">
-                <div className="field-group flex-1 min-w-[140px]">
-                    <label className="label-base">Desde</label>
+        <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-4 lg:p-5 shadow-sm space-y-3">
+            <div className="flex flex-wrap gap-4">
+                <div className="flex-1 min-w-[140px]">
+                    <label className={labelClasses}>Desde</label>
                     <input
                         type="date"
-                        className="input-base"
+                        className={inputClasses}
                         value={filters.fromDate}
                         onChange={e => onChange({ fromDate: e.target.value })}
                     />
                 </div>
 
-                <div className="field-group flex-1 min-w-[140px]">
-                    <label className="label-base">Hasta</label>
+                <div className="flex-1 min-w-[140px]">
+                    <label className={labelClasses}>Hasta</label>
                     <input
                         type="date"
-                        className="input-base"
+                        className={inputClasses}
                         value={filters.toDate}
                         onChange={e => onChange({ toDate: e.target.value })}
                     />
                 </div>
 
                 {isAdmin && (
-                    <div className="field-group flex-1 min-w-[140px]">
-                        <label className="label-base">Redil</label>
+                    <div className="flex-1 min-w-[140px]">
+                        <label className={labelClasses}>Redil</label>
                         <select
-                            className="input-base"
+                            className={inputClasses}
                             value={filters.redilId ?? ""}
                             onChange={e => onChange({ redilId: e.target.value || undefined })}
                         >
@@ -47,10 +50,10 @@ export default function StatsFilters({ filters, groups, rediles, isAdmin, onChan
                 )}
 
                 {groups.length > 0 && (
-                    <div className="field-group flex-1 min-w-[140px]">
-                        <label className="label-base">Grupo</label>
+                    <div className="flex-1 min-w-[140px]">
+                        <label className={labelClasses}>Grupo</label>
                         <select
-                            className="input-base"
+                            className={inputClasses}
                             value={filters.groupId ?? ""}
                             onChange={e => onChange({ groupId: e.target.value ? Number(e.target.value) : undefined })}
                         >
@@ -62,11 +65,11 @@ export default function StatsFilters({ filters, groups, rediles, isAdmin, onChan
                     </div>
                 )}
 
-                <div className="field-group flex-1 min-w-[140px]">
-                    <label className="label-base">Buscar estudiante</label>
+                <div className="flex-1 min-w-[140px] lg:min-w-[200px]">
+                    <label className={labelClasses}>Buscar estudiante</label>
                     <input
                         type="search"
-                        className="input-base"
+                        className={inputClasses}
                         placeholder="Nombre del estudiante..."
                         value={filters.search ?? ""}
                         onChange={e => onChange({ search: e.target.value || undefined })}

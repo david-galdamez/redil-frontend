@@ -9,19 +9,30 @@ const user = (Astro.locals as Locals).user;
 ---
 
 <Layout>
-    {
-        user?.redil_id ? (
-            <section class="page-shell">
-                <header class="page-header">
-                    <h1 class="page-title">Registrar clase</h1>
-                    <p class="page-subtitle">
-                        Completa los datos para publicar una nueva clase.
-                    </p>
-                </header>
-                <RegisterClassForm client:load apiUrl={API_URL} />
-            </section>
-        ) : (
-            <ErrorCard message="Debes estar asignado a un redil para crear una clase" />
-        )
-    }
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-4xl mx-auto">
+            {
+                user?.redil_id ? (
+                    <div class="space-y-6">
+                        <header class="mb-6">
+                            <h1 class="text-2xl md:text-3xl font-bold text-[#003366]">
+                                Registrar clase
+                            </h1>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Completa los datos para publicar una nueva
+                                clase.
+                            </p>
+                        </header>
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            <RegisterClassForm client:load apiUrl={API_URL} />
+                        </div>
+                    </div>
+                ) : (
+                    <div class="max-w-2xl mx-auto">
+                        <ErrorCard message="Debes estar asignado a un redil para crear una clase" />
+                    </div>
+                )
+            }
+        </div>
+    </div>
 </Layout>

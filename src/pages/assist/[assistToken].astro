@@ -10,17 +10,33 @@ export const prerender = false;
 const { assistToken } = Astro.params;
 
 const assistDetails = await getRedilAssistInfo(assistToken!);
-if(assistDetails.status === 404) return Astro.redirect("/not-found");
-if(assistDetails.error) Astro.response.status = assistDetails.status;
-
+if (assistDetails.status === 404) return Astro.redirect("/not-found");
+if (assistDetails.error) Astro.response.status = assistDetails.status;
 ---
 
 <Layout>
-    {
-        assistDetails?.data ? (
-            <AssistClassDetails client:load apiUrl={API_URL}, assistClass={assistDetails.data!} attendanceToken={assistToken!} emails={assistDetails.data?.emails!} />
-        ) : (
-            <ErrorCard message={assistDetails.error} status={assistDetails.status} />
-        )
-    }
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            {
+                assistDetails?.data ? (
+                    <div class="w-full">
+                        <AssistClassDetails
+                            client:load
+                            apiUrl={API_URL}
+                            assistClass={assistDetails.data!}
+                            attendanceToken={assistToken!}
+                            emails={assistDetails.data?.emails!}
+                        />
+                    </div>
+                ) : (
+                    <div class="max-w-2xl mx-auto">
+                        <ErrorCard
+                            message={assistDetails.error}
+                            status={assistDetails.status}
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
 </Layout>

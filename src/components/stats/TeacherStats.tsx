@@ -15,7 +15,7 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
     } = useTeacherStats(apiUrl, redilId);
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
             <StatsFilters
                 filters={filters}
                 groups={groups}
@@ -25,30 +25,36 @@ export default function TeacherStats({ apiUrl, redilId }: Props) {
             />
 
             {error && (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-600 text-center">
                     {error}
                 </div>
             )}
 
             {loading && (
-                <p className="text-sm text-slate-500 text-center py-6">Cargando...</p>
+                <div className="py-8 flex justify-center items-center">
+                    <p className="text-sm font-medium text-gray-500">Cargando estadísticas...</p>
+                </div>
             )}
 
             {!loading && stats.length === 0 && !error && (
-                <p className="text-sm text-slate-500 text-center py-6">
-                    No hay estadísticas para el período seleccionado.
-                </p>
+                <div className="py-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                    <p className="text-sm text-gray-500">
+                        No hay estadísticas para el período seleccionado.
+                    </p>
+                </div>
             )}
 
             {!loading && stats.length > 0 && (
-                <StatsTable
-                    stats={stats}
-                    page={page}
-                    totalPages={totalPages}
-                    loading={loading}
-                    filters={filters}
-                    onPageChange={p => fetchStats(p, filters)}
-                />
+                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                    <StatsTable
+                        stats={stats}
+                        page={page}
+                        totalPages={totalPages}
+                        loading={loading}
+                        filters={filters}
+                        onPageChange={p => fetchStats(p, filters)}
+                    />
+                </div>
             )}
         </div>
     );

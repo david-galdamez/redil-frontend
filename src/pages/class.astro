@@ -12,7 +12,6 @@ const requestedPage = Math.max(
     1,
     Number(Astro.url.searchParams.get("page") ?? "1") || 1,
 );
-
 const { data, error, status } = await getClasses(
     cookie,
     new URLSearchParams({ page: String(requestedPage) }),
@@ -21,15 +20,19 @@ if (error) Astro.response.status = status;
 ---
 
 <Layout>
-    {
-        data ? (
-            <ClassDashboard
-                client:load
-                initialClasses={data}
-                apiUrl={API_URL}
-            />
-        ) : (
-            <ErrorCard title="Error cargando clases" message={error} />
-        )
-    }
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        {
+            data ? (
+                <ClassDashboard
+                    client:load
+                    initialClasses={data}
+                    apiUrl={API_URL}
+                />
+            ) : (
+                <div class="max-w-2xl mx-auto">
+                    <ErrorCard title="Error cargando clases" message={error} />
+                </div>
+            )
+        }
+    </div>
 </Layout>

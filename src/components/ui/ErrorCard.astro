@@ -1,6 +1,4 @@
 ---
-import "../../styles/errorCard.css";
-
 interface Props {
     title?: string;
     message?: string | null;
@@ -10,33 +8,48 @@ interface Props {
 
 const ERROR_MAP: Record<
     number,
-    { title: string; message: string; icon: string; color: string }
+    {
+        title: string;
+        message: string;
+        icon: string;
+        bg: string;
+        text: string;
+        border: string;
+    }
 > = {
     401: {
         title: "No tienes acceso a este contenido",
         message:
             "Tu sesión puede haber expirado. Vuelve a iniciar sesión para continuar.",
-        icon: "ti-lock",
-        color: "danger",
+        icon: "⚠️",
+        bg: "bg-red-50",
+        text: "text-red-800",
+        border: "border-red-100",
     },
     403: {
         title: "No tienes permiso para ver esto",
         message: "Contacta a un administrador si crees que es un error.",
-        icon: "ti-shield-off",
-        color: "danger",
+        icon: "🔒",
+        bg: "bg-red-50",
+        text: "text-red-800",
+        border: "border-red-100",
     },
     404: {
         title: "No encontramos lo que buscas",
         message: "Es posible que haya sido eliminado o movido.",
-        icon: "ti-file-off",
-        color: "warning",
+        icon: "🔍",
+        bg: "bg-amber-50",
+        text: "text-amber-800",
+        border: "border-amber-100",
     },
     500: {
         title: "Algo salió mal",
         message:
             "Hubo un problema con el servidor. Intenta de nuevo en unos momentos.",
-        icon: "ti-alert-triangle",
-        color: "warning",
+        icon: "🛑",
+        bg: "bg-red-50",
+        text: "text-red-800",
+        border: "border-red-100",
     },
 };
 
@@ -45,24 +58,38 @@ const { status, retryHref } = Astro.props;
 const error = (status ? ERROR_MAP[status] : null) ?? {
     title: Astro.props.title ?? "Ocurrió un error inesperado",
     message: Astro.props.message ?? "Intenta de nuevo más tarde.",
-    icon: "ti-circle-x",
-    color: "danger",
+    icon: "❌",
+    bg: "bg-red-50",
+    text: "text-red-800",
+    border: "border-red-100",
 };
 ---
 
-<section class="error-shell">
-    <div class="error-card">
-        <div class={`error-icon-wrap error-icon-wrap--${error.color}`}>
-            <i class={`ti ${error.icon}`} aria-hidden="true"></i>
-        </div>
-        <h1 class="error-title">{error.title}</h1>
-        <p class="error-message">{error.message}</p>
-        {
-            retryHref && (
-                <a href={retryHref} class="error-btn">
-                    Reintentar
-                </a>
-            )
-        }
+<div
+    class={`w-full rounded-2xl p-6 border shadow-sm flex flex-col items-center text-center gap-4 ${error.bg} ${error.border}`}
+>
+    <div class="text-3xl leading-none">
+        {error.icon}
     </div>
-</section>
+    <div class="space-y-1">
+        <h2 class={`text-base font-bold ${error.text}`}>
+            {error.title}
+        </h2>
+        <p class="text-sm text-gray-600 max-w-md mx-auto">
+            {error.message}
+        </p>
+    </div>
+
+    {
+        retryHref && (
+            <div class="pt-2">
+                <a
+                    href={retryHref}
+                    class="inline-block bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition-colors"
+                >
+                    Reintentar acción
+                </a>
+            </div>
+        )
+    }
+</div>
