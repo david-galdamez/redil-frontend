@@ -1,5 +1,10 @@
 {
   "name": "comu-redil-web-app",
   "compatibility_date": "2024-05-27",
-  "pages_build_output_dir": "./dist"
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./dist/_worker.js/index.js",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  }
 }
