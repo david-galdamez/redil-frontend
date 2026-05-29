@@ -32,7 +32,9 @@ export function useTeacherStats(apiUrl: string, redilId?: string) {
 
     async function fetchGroups() {
         try {
-            const res = await fetch(`${apiUrl}/api/groups`);
+            const res = await fetch(`${apiUrl}/api/groups`, {
+                credentials: "include",
+            });
             const data: ApiResponse<GroupDto[]> = await res.json();
             if (data.success) setGroups(data.data ?? []);
         } catch { }
@@ -40,7 +42,9 @@ export function useTeacherStats(apiUrl: string, redilId?: string) {
 
     async function fetchRediles() {
         try {
-            const res = await fetch(`${apiUrl}/api/redil`);
+            const res = await fetch(`${apiUrl}/api/redil`, {
+                credentials: "include",
+            });
             const data: ApiResponse<RedilListDto[]> = await res.json();
             if (data.success) setRediles(data.data ?? []);
         } catch { }

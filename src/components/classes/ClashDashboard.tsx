@@ -13,6 +13,7 @@ export default function ClassDashboard({ initialClasses, apiUrl }: Props) {
         endpoint: "/api/class",
         apiUrl,
         basePath: "/class",
+        credentials: "include",
     });
 
     return (
