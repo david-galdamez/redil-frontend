@@ -13,6 +13,7 @@ export async function apiFetch<T>(
     try {
         const res = await fetch(`${API_URL}/${path}`, {
             method: options.method ?? "GET",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
                 ...(options.cookie ? { cookie: options.cookie } : {}),
