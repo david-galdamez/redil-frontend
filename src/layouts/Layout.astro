@@ -23,14 +23,6 @@ const visibleLinks = navLinks.filter((item) =>
     user ? item.roles.includes(user.role) : false,
 );
 
-const userInitials = user?.name
-    ? user.name
-          .split(" ")
-          .map((n: string) => n[0])
-          .slice(0, 2)
-          .join("")
-          .toUpperCase()
-    : "?";
 ---
 
 <!doctype html>
