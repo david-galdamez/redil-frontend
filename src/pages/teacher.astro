@@ -1,13 +1,13 @@
 ---
+import type { Locals } from "astro";
 import Layout from "../layouts/Layout.astro";
 import TeacherDashboard from "../components/teachers/TeacherDashboard";
 import ErrorCard from "../components/ui/ErrorCard.astro";
 import { getTeachers } from "../lib/api/teachers";
-import { API_URL } from "../lib/api/client";
 
 export const prerender = false;
 
-const cookie = Astro.request.headers.get("cookie");
+const token = (Astro.locals as Locals).token;
 const requestedPage = Math.max(
     1,
     Number(Astro.url.searchParams.get("page") ?? "1") || 1,
@@ -15,7 +15,7 @@ const requestedPage = Math.max(
 const search = Astro.url.searchParams.get("search") ?? "";
 const params = new URLSearchParams({ page: String(requestedPage) });
 if (search) params.set("search", search);
-const { data, error, status } = await getTeachers(cookie, params);
+const { data, error, status } = await getTeachers(token, params);
 if (error) Astro.response.status = status;
 ---
 
@@ -23,12 +23,11 @@ if (error) Astro.response.status = status;
     <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
         {
             data ? (
-                <TeacherDashboard
-                    client:load
-                    initialTeachers={data}
-                    initialSearch={search}
-                    apiUrl={API_URL}
-                />
+                    <TeacherDashboard
+                        client:load
+                        initialTeachers={data}
+                        initialSearch={search}
+                    />
             ) : (
                 <div class="max-w-2xl mx-auto">
                     <ErrorCard

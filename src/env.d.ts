@@ -3,7 +3,8 @@
 import type { JwtUser } from "./types/user";
 
 declare module "astro" {
-    interface Locals {
-        user: JwtUser | null;
-    }
+  interface Locals {
+    user: JwtUser | null;
+    token: string | null;
+  }
 }

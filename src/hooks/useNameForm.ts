@@ -1,73 +1,67 @@
 import { useState, useEffect } from "react";
 import { toast } from "@pheralb/toast";
 import type { UserDetailsDto } from "../types/user";
+import { apiClient } from "../lib/api/client";
 
 const initialErrors = { name: "", general: "" };
 
-export function useNameForm(user: UserDetailsDto, apiUrl: string) {
-    const [editing, setEditing] = useState(false);
-    const [form, setForm] = useState({ name: user.name });
-    const [errors, setErrors] = useState(initialErrors);
-    const [loading, setLoading] = useState(false);
+export function useNameForm(user: UserDetailsDto) {
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({ name: user.name });
+  const [errors, setErrors] = useState(initialErrors);
+  const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        setForm({ name: user.name });
-        setErrors(initialErrors);
-    }, [user]);
+  useEffect(() => {
+    setForm({ name: user.name });
+    setErrors(initialErrors);
+  }, [user]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ name: e.target.value });
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ name: e.target.value });
+  };
 
-    const handleCancel = () => {
-        setForm({ name: user.name });
-        setErrors(initialErrors);
-        setEditing(false);
-    };
+  const handleCancel = () => {
+    setForm({ name: user.name });
+    setErrors(initialErrors);
+    setEditing(false);
+  };
 
-    const handleSubmit = async () => {
-        setErrors(initialErrors);
+  const handleSubmit = async () => {
+    setErrors(initialErrors);
 
-        if (form.name.trim().length < 2) {
-            setErrors(prev => ({ ...prev, name: "El nombre debe tener al menos 2 caracteres." }));
-            return;
-        }
+    if (form.name.trim().length < 2) {
+      setErrors(prev => ({ ...prev, name: "El nombre debe tener al menos 2 caracteres." }));
+      return;
+    }
 
-        setLoading(true);
-        try {
-            const res = await fetch(`${apiUrl}/api/auth/me`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ name: form.name.trim() }),
-            });
+    setLoading(true);
+    try {
+      const result = await apiClient.patch<UserDetailsDto>("api/auth/me", { name: form.name.trim() });
 
-            const resData = (await res.json()) as ApiResponse<UserDetailsDto>;
+      if (result.errors) {
+        result.errors.forEach((err) => {
+          if (err.field.toLowerCase() === "name") {
+            setErrors(prev => ({ ...prev, name: err.message }));
+          }
+        });
+        return;
+      }
 
-            if (res.status === 400 && resData.errors) {
-                resData.errors.forEach((err: Error) => {
-                    if (err.field.toLowerCase() === "name") {
-                        setErrors(prev => ({ ...prev, name: err.message }));
-                    }
-                });
-                return;
-            }
+      if (result.error) {
+        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error inesperado." }));
+        return;
+      }
 
-            if (!res.ok || !resData.success) {
-                setErrors(prev => ({ ...prev, general: resData.message || "Ocurrió un error inesperado." }));
-                return;
-            }
+      toast.success({ text: "Nombre actualizado exitosamente." });
+      setEditing(false);
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      toast.error({ text: "Ocurrió un error de red." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            toast.success({ text: resData.message || "Nombre actualizado exitosamente." });
-            setEditing(false);
-            window.location.reload();
-        } catch (err) {
-            console.error(err);
-            toast.error({ text: "Ocurrió un error de red." });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return { editing, setEditing, form, errors, loading, handleChange, handleCancel, handleSubmit };
+  return { editing, setEditing, form, errors, loading, handleChange, handleCancel, handleSubmit };
 }

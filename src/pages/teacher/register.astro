@@ -2,7 +2,6 @@
 import Layout from "../../layouts/Layout.astro";
 import RegisterTeacherForm from "../../components/teachers/RegisterTeacherForm.tsx";
 import { getRedilsList } from "../../lib/api/redil";
-import { API_URL } from "../../lib/api/client";
 
 export const prerender = false;
 
@@ -27,7 +26,6 @@ if (redils.error) Astro.response.status = redils.status;
             >
                 <RegisterTeacherForm
                     client:load
-                    apiUrl={API_URL}
                     rediles={redils?.data! || []}
                 />
             </div>

@@ -2,20 +2,20 @@
 import Layout from "../layouts/Layout.astro";
 import RedilDetailsTeachers from "../components/redil/RedilDetailsTeachers.tsx";
 import type { Locals } from "astro";
-import { API_URL } from "../lib/api/client";
+
 import { getRedilDetails } from "../lib/api/redil";
 import ErrorCard from "../components/ui/ErrorCard.astro";
 export const prerender = false;
 
 const user = (Astro.locals as Locals).user;
-const cookie = Astro.request.headers.get("cookie");
+const token = (Astro.locals as Locals).token;
 if (!user) {
     return (Astro.response.status = 401);
 } else if (!user.redil_id) {
     return (Astro.response.status = 403);
 }
 
-const redilDetails = await getRedilDetails(user.redil_id, cookie!);
+const redilDetails = await getRedilDetails(user.redil_id, token!);
 if (redilDetails.status === 404) return Astro.redirect("/not-found");
 if (redilDetails.error) Astro.response.status = redilDetails.status;
 ---
@@ -29,7 +29,6 @@ if (redilDetails.error) Astro.response.status = redilDetails.status;
                         client:only
                         id={user.redil_id!}
                         redil={redilDetails.data!}
-                        apiUrl={API_URL}
                     />
                 </div>
             ) : (

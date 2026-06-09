@@ -2,12 +2,11 @@ import { useRedilRegisterForm } from "../../hooks/useRedilRegisterForm";
 
 interface Props {
   redilCode: string;
-  apiUrl: string;
   groups: GroupDto[];
 }
 
-export default function RedilRegisterForm({ redilCode, apiUrl, groups }: Props) {
-  const { form, loading, errors, handleChange, handleSubmit } = useRedilRegisterForm(apiUrl, redilCode);
+export default function RedilRegisterForm({ redilCode, groups }: Props) {
+  const { form, loading, errors, handleChange, handleSubmit } = useRedilRegisterForm(redilCode);
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>

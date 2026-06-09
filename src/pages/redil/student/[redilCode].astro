@@ -3,7 +3,7 @@ import Layout from "../../../layouts/Layout.astro";
 import RedilRegisterForm from "../../../components/student/StudentRegisterForm.tsx";
 import { getRedilByCode } from "../../../lib/api/redil";
 import { getGroups } from "../../../lib/api/groups";
-import { API_URL } from "../../../lib/api/client";
+
 import ErrorCard from "../../../components/ui/ErrorCard.astro";
 
 export const prerender = false;
@@ -45,7 +45,6 @@ if (redils.error) Astro.response.status = redils.status;
                             <RedilRegisterForm
                                 client:load
                                 redilCode={redilCode || ""}
-                                apiUrl={API_URL}
                                 groups={groups?.data || []}
                             />
                         </div>

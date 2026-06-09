@@ -1,7 +1,7 @@
 import { apiFetch } from "./client"
 
-export const getClassDetails = (id: string, cookie?: string | null) =>
-    apiFetch<ClassDetailsDto>(`api/class/${id}`, { cookie })
+export const getClassDetails = (id: string, token?: string | null) =>
+  apiFetch<ClassDetailsDto>(`api/class/${id}`, { token })
 
-export const getClasses = (cookie: string | null, params: URLSearchParams) =>
-    apiFetch<PaginatedResponse<ClassDto[]>>(`api/class?${params}`, { cookie });
+export const getClasses = (token: string | null, params: URLSearchParams) =>
+  apiFetch<PaginatedResponse<ClassDto[]>>(`api/class?${params}`, { token });

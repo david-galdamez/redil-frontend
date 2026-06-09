@@ -2,7 +2,7 @@
 import AssistClassDetails from "../../components/classes/AssistClassDetails";
 import Layout from "../../layouts/Layout.astro";
 import { getRedilAssistInfo } from "../../lib/api/redil";
-import { API_URL } from "../../lib/api/client";
+
 import ErrorCard from "../../components/ui/ErrorCard.astro";
 
 export const prerender = false;
@@ -22,7 +22,6 @@ if (assistDetails.error) Astro.response.status = assistDetails.status;
                     <div class="w-full">
                         <AssistClassDetails
                             client:load
-                            apiUrl={API_URL}
                             assistClass={assistDetails.data!}
                             attendanceToken={assistToken!}
                             emails={assistDetails.data?.emails!}

@@ -1,17 +1,16 @@
 ---
+import type { Locals } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import RedilDetails from "../../components/redil/RedilDetails.tsx";
-import { API_URL } from "../../lib/api/client";
 import { getRedilDetails } from "../../lib/api/redil";
-import { redirectToDefaultLocale } from "astro:i18n";
 import ErrorCard from "../../components/ui/ErrorCard.astro";
 
 export const prerender = false;
 
 const { id } = Astro.params;
-const cookie = Astro.request.headers.get("cookie");
+const token = (Astro.locals as Locals).token;
 
-const redil = await getRedilDetails(id!, cookie);
+const redil = await getRedilDetails(id!, token);
 if (redil.status === 404) return Astro.redirect("/not-found");
 if (redil.error) Astro.response.status = redil.status;
 ---
@@ -26,7 +25,6 @@ if (redil.error) Astro.response.status = redil.status;
                             client:only
                             id={id! ?? ""}
                             redil={redil.data!}
-                            apiUrl={API_URL}
                         />
                     </div>
                 ) : (

@@ -1,16 +1,16 @@
 ---
+import type { Locals } from "astro";
 import ClassDetails from "../../components/classes/ClassDetails";
 import ErrorCard from "../../components/ui/ErrorCard.astro";
 import Layout from "../../layouts/Layout.astro";
 import { getClassDetails } from "../../lib/api/class";
-import { API_URL } from "../../lib/api/client";
 
 export const prerender = false;
 
 const { id } = Astro.params;
-const cookie = Astro.request.headers.get("cookie");
+const token = (Astro.locals as Locals).token;
 
-const classDetails = await getClassDetails(id!, cookie);
+const classDetails = await getClassDetails(id!, token);
 
 if (classDetails.status === 404) return Astro.redirect("/not-found");
 if (classDetails.error) Astro.response.status = classDetails.status;
@@ -24,7 +24,6 @@ if (classDetails.error) Astro.response.status = classDetails.status;
                     <div class="w-full">
                         <ClassDetails
                             client:only
-                            apiUrl={API_URL}
                             classDetails={classDetails.data!}
                         />
                     </div>

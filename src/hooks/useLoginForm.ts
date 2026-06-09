@@ -2,10 +2,16 @@ import { useState } from "react";
 import { toast } from "@pheralb/toast";
 import { navigate } from "astro:transitions/client";
 import { validatePassword } from "../lib/validatePassword";
-import type { UserDto } from "../types/user";
+import type { LoginResponse } from "../types/auth";
+import { apiClient } from "../lib/api/client";
 
 const initialForm = { email: "", password: "" };
 const initialErrors = { email: "", password: "", general: "" };
+
+function setAuthToken(token: string) {
+  localStorage.setItem("auth_token", token);
+  document.cookie = `access_token=${token}; path=/; max-age=86400; samesite=lax`;
+}
 
 export function useLoginForm() {
   const [form, setForm] = useState(initialForm);
@@ -20,7 +26,7 @@ export function useLoginForm() {
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setErrors(initialErrors); // limpia errores previos en cada intento
+    setErrors(initialErrors);
 
     try {
       if (!validatePassword(form.password)) {
@@ -31,17 +37,10 @@ export function useLoginForm() {
         return;
       }
 
-      const res = await fetch(`/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-        credentials: "include",
-      });
+      const result = await apiClient.post<LoginResponse>("api/auth/login", form);
 
-      const data = (await res.json()) as ApiResponse<UserDto>;
-
-      if (res.status === 400 && data.errors) {
-        data.errors.forEach((err: Error) => {
+      if (result.errors) {
+        result.errors.forEach((err) => {
           const field = err.field.toLowerCase() as "email" | "password";
           if (field === "email" || field === "password") {
             setErrors(prev => ({ ...prev, [field]: err.message }));
@@ -50,17 +49,22 @@ export function useLoginForm() {
         return;
       }
 
-      if (!res.ok || !data.success) {
+      if (result.error) {
         setErrors(prev => ({
           ...prev,
-          general: data.message || (res.status === 401 ? "Credenciales incorrectas" : "Ocurrió un error inesperado"),
+          general: result.error || (result.status === 401 ? "Credenciales incorrectas" : "Ocurrió un error inesperado"),
         }));
         return;
       }
 
-      toast.success({ text: data.message || "Inicio de sesión exitoso" });
-      setForm(initialForm);
-      navigate("/");
+      if (result.data?.accessToken) {
+        setAuthToken(result.data.accessToken);
+        toast.success({ text: "Inicio de sesión exitoso" });
+        setForm(initialForm);
+        navigate("/");
+      } else {
+        toast.error({ text: "No se recibió el token de autenticación del servidor" });
+      }
     } catch (e) {
       console.error(e);
       toast.error({ text: "Ocurrió un error de red" });

@@ -1,19 +1,19 @@
 ---
+import type { Locals } from "astro";
 import Layout from "../layouts/Layout.astro";
 import ErrorCard from "../components/ui/ErrorCard.astro";
 import { getClasses } from "../lib/api/class";
-import { API_URL } from "../lib/api/client";
 import ClassDashboard from "../components/classes/ClashDashboard";
 
 export const prerender = false;
 
-const cookie = Astro.request.headers.get("cookie");
+const token = (Astro.locals as Locals).token;
 const requestedPage = Math.max(
     1,
     Number(Astro.url.searchParams.get("page") ?? "1") || 1,
 );
 const { data, error, status } = await getClasses(
-    cookie,
+    token,
     new URLSearchParams({ page: String(requestedPage) }),
 );
 if (error) Astro.response.status = status;
@@ -26,7 +26,6 @@ if (error) Astro.response.status = status;
                 <ClassDashboard
                     client:load
                     initialClasses={data}
-                    apiUrl={API_URL}
                 />
             ) : (
                 <div class="max-w-2xl mx-auto">

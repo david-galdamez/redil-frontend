@@ -1,7 +1,6 @@
 ---
 import RegisterRedilForm from "../../components/redil/RegisterRedilForm";
 import Layout from "../../layouts/Layout.astro";
-import { API_URL } from "../../lib/api/client";
 ---
 
 <Layout>
@@ -19,7 +18,7 @@ import { API_URL } from "../../lib/api/client";
             <div
                 class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
             >
-                <RegisterRedilForm client:load apiUrl={API_URL} />
+                <RegisterRedilForm client:load />
             </div>
         </div>
     </div>

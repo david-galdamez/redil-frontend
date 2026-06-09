@@ -1,6 +1,6 @@
 ---
+import type { Locals } from "astro";
 import Layout from "../../layouts/Layout.astro";
-import { API_URL } from "../../lib/api/client";
 import TeacherDetails from "../../components/teachers/TeacherDetails";
 import { getTeacherDetails, getRedils } from "../../lib/api/teachers";
 import ErrorCard from "../../components/ui/ErrorCard.astro";
@@ -8,10 +8,10 @@ import ErrorCard from "../../components/ui/ErrorCard.astro";
 export const prerender = false;
 
 const { id } = Astro.params;
-const cookie = Astro.request.headers.get("cookie");
+const token = (Astro.locals as Locals).token;
 
 const [teacher, redils] = await Promise.all([
-    getTeacherDetails(id!, cookie),
+    getTeacherDetails(id!, token),
     getRedils(),
 ]);
 
@@ -30,7 +30,6 @@ if (teacher.error) Astro.response.status = teacher.status;
                             id={id! ?? ""}
                             teacher={teacher.data!}
                             redils={redils.data || []}
-                            apiUrl={API_URL}
                         />
                     </div>
                 ) : (

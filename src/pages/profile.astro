@@ -1,13 +1,12 @@
 ---
-import type { UserDetailsDto } from "../types/user";
+import type { Locals } from "astro";
 import Layout from "../layouts/Layout.astro";
 import ProfileDetails from "../components/profile/ProfileDetails";
 import { getProfile } from "../lib/api/auth";
-import { API_URL } from "../lib/api/client";
 import ErrorCard from "../components/ui/ErrorCard.astro";
 
-const cookie = Astro.request.headers.get("cookie");
-const profile = await getProfile(cookie);
+const token = (Astro.locals as Locals).token;
+const profile = await getProfile(token);
 
 if (profile.error) Astro.response.status = profile.status;
 ---
@@ -20,7 +19,6 @@ if (profile.error) Astro.response.status = profile.status;
                     <ProfileDetails
                         client:load
                         user={profile.data!}
-                        apiUrl={API_URL}
                     />
                 ) : (
                     <div class="p-4">

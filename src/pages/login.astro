@@ -1,7 +1,6 @@
 ---
 import LoginForm from "../components/LoginForm";
 import Layout from "../layouts/Layout.astro";
-import { API_URL } from "../lib/api/client";
 ---
 
 <Layout>
@@ -29,7 +28,7 @@ import { API_URL } from "../lib/api/client";
                 </p>
             </header>
 
-            <LoginForm client:load apiUrl={API_URL} />
+            <LoginForm client:load />
         </div>
     </div>
 </Layout>
