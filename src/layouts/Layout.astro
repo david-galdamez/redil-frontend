@@ -19,9 +19,17 @@ const navLinks = [
     { href: "/my-redil", label: "Mi Redil", roles: ["Admin", "Maestro"] },
 ];
 
-const visibleLinks = navLinks.filter((item) =>
-    user ? item.roles.includes(user.role) : false,
-);
+const visibleLinks = navLinks.filter((item) => {
+  if(item.roles.includes("Maestro") && !user?.redil_id) {
+    return false
+  }
+
+  if(user) {
+    return item.roles.includes(user.role)
+  }
+
+  return false
+});
 
 ---
 
