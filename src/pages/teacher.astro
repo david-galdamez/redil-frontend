@@ -13,8 +13,12 @@ const requestedPage = Math.max(
     Number(Astro.url.searchParams.get("page") ?? "1") || 1,
 );
 const search = Astro.url.searchParams.get("search") ?? "";
+const redilId = Astro.url.searchParams.get("redilId") ?? "";
+const roleId = Astro.url.searchParams.get("roleId") ?? "";
 const params = new URLSearchParams({ page: String(requestedPage) });
 if (search) params.set("search", search);
+if (redilId) params.set("redilId", redilId);
+if (roleId) params.set("roleId", roleId);
 const { data, error, status } = await getTeachers(token, params);
 if (error) Astro.response.status = status;
 ---
@@ -27,6 +31,8 @@ if (error) Astro.response.status = status;
                         client:load
                         initialTeachers={data}
                         initialSearch={search}
+                        initialRedilId={redilId}
+                        initialRoleId={roleId}
                     />
             ) : (
                 <div class="max-w-2xl mx-auto">

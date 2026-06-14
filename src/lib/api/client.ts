@@ -39,6 +39,15 @@ export async function apiFetch<T>(
 
     const json = (await res.json()) as ApiResponse<T>;
 
+    if (res.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("auth_token");
+        document.cookie = "access_token=; path=/; max-age=0";
+        window.location.href = "/login";
+      }
+      return { data: null, error: json.message ?? "No autorizado", status: 401, errors: json.errors };
+    }
+
     if (!res.ok) {
       return { data: null, error: json.message ?? "Error", status: res.status, errors: json.errors };
     }

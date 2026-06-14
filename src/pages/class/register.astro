@@ -22,9 +22,7 @@ const user = (Astro.locals as Locals).user;
                                 clase.
                             </p>
                         </header>
-                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                            <RegisterClassForm client:load />
-                        </div>
+                        <RegisterClassForm client:load />
                     </div>
                 ) : (
                     <div class="max-w-2xl mx-auto">

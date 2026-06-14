@@ -33,7 +33,7 @@ export function useTeacherForm(id: string, teacher: TeacherDetailsDto) {
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : name === "redilId"
-            ? (value ? Number(value) : null)
+            ? (value === "" ? null : Number(value))
             : value,
     }));
   };

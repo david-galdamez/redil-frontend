@@ -1,5 +1,6 @@
 ---
 import { Toaster } from "@pheralb/toast";
+import SessionWatcher from "../components/ui/SessionWatcher";
 import "../styles/global.css";
 import "../styles/navbar.css";
 import type { Locals } from "astro";
@@ -178,6 +179,19 @@ const visibleLinks = navLinks.filter((item) => {
                                 {item.label}
                             </a>
                         ))}
+                        <hr class="border-blue-900/30 my-2" />
+                        <a
+                            href="/profile"
+                            class="block px-4 py-2.5 rounded-xl text-sm font-medium text-blue-100 hover:bg-white/5 transition-colors"
+                        >
+                            Mi Perfil
+                        </a>
+                        <button
+                            id="logoutBtnMobile"
+                            class="w-full text-left block px-4 py-2.5 rounded-xl text-sm font-medium text-red-300 hover:bg-white/5 transition-colors"
+                        >
+                            Cerrar sesión
+                        </button>
                     </nav>
                 </header>
             )
@@ -188,6 +202,7 @@ const visibleLinks = navLinks.filter((item) => {
         </main>
 
         <Toaster client:load position="top-right" />
+        <SessionWatcher client:load />
     </body>
 </html>
 
@@ -198,6 +213,7 @@ const visibleLinks = navLinks.filter((item) => {
     const hamburger = document.getElementById("hamburgerBtn");
     const mobileNav = document.getElementById("mobileNav");
     const logoutBtn = document.getElementById("logoutBtn");
+    const logoutBtnMobile = document.getElementById("logoutBtnMobile");
 
     btn?.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -217,9 +233,12 @@ const visibleLinks = navLinks.filter((item) => {
         mobileNav?.classList.toggle("open");
     });
 
-    logoutBtn?.addEventListener("click", () => {
+    function logout() {
         localStorage.removeItem("auth_token");
         document.cookie = "access_token=; path=/; max-age=0";
         window.location.href = "/login";
-    });
+    }
+
+    logoutBtn?.addEventListener("click", logout);
+    logoutBtnMobile?.addEventListener("click", logout);
 </script>
