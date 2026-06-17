@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useTeacherStats } from "../../hooks/useTeacherStats";
+import { API_URL } from "../../lib/api/client";
 import StatsFilters from "./StatsFilters";
 import StatsTable from "./StatsTable";
 
@@ -13,6 +15,46 @@ export default function TeacherStats({ redilId }: Props) {
     fetchStats, handleFilterChange,
   } = useTeacherStats(redilId);
 
+  const [exporting, setExporting] = useState(false);
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const token = localStorage.getItem("auth_token");
+      const endpoint = isAdmin
+        ? `${API_URL}/api/redil/stats/export`
+        : `${API_URL}/api/teacher/redil/stats/export`;
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(filters),
+      });
+
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.message ?? "Error al exportar.");
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `estadisticas_${filters.fromDate}_${filters.toDate}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   return (
     <div className="space-y-4 w-full">
       <StatsFilters
@@ -21,6 +63,8 @@ export default function TeacherStats({ redilId }: Props) {
         rediles={rediles}
         isAdmin={isAdmin}
         onChange={handleFilterChange}
+        onExport={handleExport}
+        exporting={exporting}
       />
 
       {error && (
