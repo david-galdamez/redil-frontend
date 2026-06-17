@@ -5,13 +5,14 @@ import RegisterClassForm from "../../components/classes/RegisterClassForm";
 import ErrorCard from "../../components/ui/ErrorCard.astro";
 
 const user = (Astro.locals as Locals).user;
+const userProfile = (Astro.locals as Locals).userProfile;
 ---
 
 <Layout>
     <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
         <div class="max-w-4xl mx-auto">
             {
-                user?.redil_id ? (
+                (userProfile?.redilId ?? user?.redil_id) ? (
                     <div class="space-y-6">
                         <header class="mb-6">
                             <h1 class="text-2xl md:text-3xl font-bold text-[#003366]">

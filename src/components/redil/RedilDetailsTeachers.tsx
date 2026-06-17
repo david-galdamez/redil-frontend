@@ -1,7 +1,9 @@
+import { useState } from "react";
 import LinkCard from "../ui/LinkCard";
 import RedilTabs from "./RedilTabs";
 import StudentsTab from "../student/StudentsTab";
 import TeacherStats from "../stats/TeacherStats";
+import FinishCourseModal from "./FinishCourseModal";
 
 interface Props {
   id: string;
@@ -16,6 +18,7 @@ const TAB_LIST = [
 ] as const;
 
 export default function RedilDetailsTeacher({ id, redil }: Props) {
+  const [showFinishModal, setShowFinishModal] = useState(false);
   const redilLink = `${window.location.origin}/redil/student/${redil.redilCode}`;
 
   return (
@@ -60,6 +63,22 @@ export default function RedilDetailsTeacher({ id, redil }: Props) {
           />
         </div>
       </div>
+      <div className="pt-6 border-t border-gray-100 flex justify-end">
+        <button
+          onClick={() => setShowFinishModal(true)}
+          className="w-full sm:w-fit bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 px-6 rounded-xl text-sm shadow-sm transition-colors"
+        >
+          Terminar curso
+        </button>
+      </div>
+
+      {showFinishModal && (
+        <FinishCourseModal
+          redilId={id}
+          onClose={() => setShowFinishModal(false)}
+          onSuccess={() => window.location.reload()}
+        />
+      )}
     </section>
   );
 }

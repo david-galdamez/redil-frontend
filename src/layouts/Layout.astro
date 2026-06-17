@@ -8,6 +8,8 @@ import { isPublicRoute } from "../lib/authHelper";
 import { publicRoutes } from "../lib/authConfig";
 
 const user = (Astro.locals as Locals).user;
+const userProfile = (Astro.locals as Locals).userProfile;
+const hasRedil = userProfile?.redilId ?? user?.redil_id;
 const pathname = Astro.url.pathname;
 const isPublic = isPublicRoute(pathname, publicRoutes);
 const isProtectedPage = Boolean(user) && !isPublic;
@@ -21,7 +23,7 @@ const navLinks = [
 ];
 
 const visibleLinks = navLinks.filter((item) => {
-  if(item.roles.includes("Maestro") && !user?.redil_id) {
+  if(item.roles.includes("Maestro") && !hasRedil) {
     return false
   }
 

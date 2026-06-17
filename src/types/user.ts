@@ -19,4 +19,5 @@ export interface UserDetailsDto {
     email: string;
     role: string;
     redilName: string;
+    redilId: number | null;
 }

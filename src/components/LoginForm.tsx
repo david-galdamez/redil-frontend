@@ -4,7 +4,7 @@ export default function LoginForm() {
   const { form, loading, errors, handleChange, handleSubmit } = useLoginForm();
 
   return (
-    <form className="w-full max-w-md bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 space-y-5" onSubmit={handleSubmit}>
+    <form className="w-full space-y-5" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-semibold text-gray-700" htmlFor="email">Correo</label>
         <input

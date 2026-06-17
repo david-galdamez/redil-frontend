@@ -3,8 +3,8 @@ import type { Locals } from "astro";
 import { getRoleRute, isPublicRoute } from "./lib/authHelper";
 import { publicRoutes, roleRoutes } from "./lib/authConfig";
 import { jwtDecode } from "jwt-decode";
-import type { JwtUser } from "./types/user";
-
+import type { JwtUser, UserDetailsDto } from "./types/user";
+const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { redirect, url, cookies } = context
@@ -17,6 +17,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isLogin = pathname === "/login";
 
   let user: JwtUser | null = null;
+  let userProfile: UserDetailsDto | null = null;
 
   if (rawToken) {
     try {
@@ -25,10 +26,25 @@ export const onRequest = defineMiddleware(async (context, next) => {
       console.error("Error decoding JWT:", err);
       user = null;
     }
+
+    if (user) {
+      try {
+        const response = await fetch(`${API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${rawToken}` },
+        });
+        if (response.ok) {
+          const json = await response.json();
+          userProfile = json.data ?? null;
+        }
+      } catch {
+        // Si falla la obtención del perfil, usamos datos del JWT
+      }
+    }
   }
 
   (context.locals as Locals).user = user;
   (context.locals as Locals).token = rawToken ?? null;
+  (context.locals as Locals).userProfile = userProfile;
 
   const rule = getRoleRute(pathname, roleRoutes);
 
