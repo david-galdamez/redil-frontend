@@ -2,10 +2,12 @@
 import Layout from "../../layouts/Layout.astro";
 import RegisterTeacherForm from "../../components/teachers/RegisterTeacherForm.tsx";
 import { getRedilsList } from "../../lib/api/redil";
+import type { Locals } from "astro";
 
 export const prerender = false;
 
-const redils = await getRedilsList();
+const token = (Astro.locals as Locals).token;
+const redils = await getRedilsList(token);
 if (redils.error) Astro.response.status = redils.status;
 ---
 

@@ -3,7 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import RedilList from "../components/redil/RedilList";
 import { getRedilsList } from "../lib/api/redil";
 import ErrorCard from "../components/ui/ErrorCard.astro";
-const redilList = await getRedilsList();
+import type { Locals } from "astro";
+
+const token = (Astro.locals as Locals).token;
+const redilList = await getRedilsList(token);
 
 if (redilList.error) Astro.response.status = redilList.status;
 ---
