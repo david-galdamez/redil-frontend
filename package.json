@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "pnpm exec wrangler pages deploy dist"
+    "deploy": "pnpm exec wrangler deploy"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.13",
