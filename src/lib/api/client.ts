@@ -37,7 +37,19 @@ export async function apiFetch<T>(
       body: options.body ? JSON.stringify(options.body) : undefined,
     });
 
-    const json = (await res.json()) as ApiResponse<T>;
+    // Some responses (e.g. 401s) come back with an empty body and no
+    // content-type. Calling res.json() directly on those throws, which would
+    // otherwise be caught below and reported as a misleading 500. Parse the
+    // body defensively so real status codes (401, 403, ...) are preserved.
+    const rawBody = await res.text();
+    let json: ApiResponse<T> = {} as ApiResponse<T>;
+    if (rawBody) {
+      try {
+        json = JSON.parse(rawBody) as ApiResponse<T>;
+      } catch {
+        json = {} as ApiResponse<T>;
+      }
+    }
 
     if (res.status === 401) {
       if (typeof window !== "undefined") {

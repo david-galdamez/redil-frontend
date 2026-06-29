@@ -35,9 +35,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
         if (response.ok) {
           const json = await response.json();
           userProfile = json.data ?? null;
+        } else if (response.status === 401) {
+          // El token existe pero la API lo rechaza (expirado/inválido).
+          // Lo limpiamos y tratamos la petición como no autenticada para que
+          // se redirija a /login en vez de mostrar errores en rutas protegidas.
+          user = null;
+          cookies.delete("access_token", { path: "/" });
         }
       } catch {
-        // Si falla la obtención del perfil, usamos datos del JWT
+        // Si falla la obtención del perfil (error de red), usamos datos del JWT
       }
     }
   }
