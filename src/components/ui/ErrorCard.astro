@@ -53,7 +53,7 @@ const ERROR_MAP: Record<
     },
 };
 
-const { status, retryHref } = Astro.props;
+const { status, message, retryHref } = Astro.props;
 
 const error = (status ? ERROR_MAP[status] : null) ?? {
     title: Astro.props.title ?? "Ocurrió un error inesperado",
@@ -76,7 +76,7 @@ const error = (status ? ERROR_MAP[status] : null) ?? {
             {error.title}
         </h2>
         <p class="text-sm text-gray-600 max-w-md mx-auto">
-            {error.message}
+            {message ? message : error.message }
         </p>
     </div>
 

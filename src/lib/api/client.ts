@@ -67,7 +67,7 @@ export async function apiFetch<T>(
     return { data: json.data ?? null, error: null, status: res.status, errors: json.errors };
   } catch (e) {
     console.error(e)
-    return { data: null, error: "Error conectando al servidor.", status: 500 };
+    return { data: null, error: `Error conectando: ${e instanceof Error ? e.message : String(e)}`, status: 500 };
   }
 }
 
