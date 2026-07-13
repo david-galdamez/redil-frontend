@@ -63,11 +63,17 @@ export function useLoginForm() {
         setForm(initialForm);
         navigate("/");
       } else {
-        toast.error({ text: "No se recibió el token de autenticación del servidor" });
+        setErrors(prev => ({
+          ...prev,
+          general: "No se recibió el token de autenticación del servidor",
+        }));
       }
     } catch (e) {
       console.error(e);
-      toast.error({ text: "Ocurrió un error de red" });
+      setErrors(prev => ({
+        ...prev,
+        general: "Ocurrió un error de red. Verifica tu conexión e intenta de nuevo.",
+      }));
     } finally {
       setLoading(false);
     }

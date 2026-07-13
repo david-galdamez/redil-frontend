@@ -52,7 +52,7 @@ export async function apiFetch<T>(
     }
 
     if (res.status === 401) {
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
         localStorage.removeItem("auth_token");
         document.cookie = "access_token=; path=/; max-age=0";
         window.location.href = "/login";

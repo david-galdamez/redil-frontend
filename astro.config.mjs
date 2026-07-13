@@ -4,12 +4,12 @@ import cloudflare from '@astrojs/cloudflare';
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 
-import netlify from "@astrojs/netlify";
+// import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  adapter: netlify(),
+  adapter: cloudflare(),
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
