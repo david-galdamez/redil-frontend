@@ -1,0 +1,34 @@
+---
+import type { Locals } from "astro";
+import Layout from "../layouts/Layout.astro";
+import ProfileDetails from "../components/profile/ProfileDetails";
+import { getProfile } from "../lib/api/auth";
+import ErrorCard from "../components/ui/ErrorCard.astro";
+
+const token = (Astro.locals as Locals).token;
+const profile = await getProfile(token);
+
+if (profile.error) Astro.response.status = profile.status;
+---
+
+<Layout>
+    <div class="min-h-screen bg-[#F4F6F9] md:p-8">
+        <div class="max-w-4xl mx-auto">
+            {
+                profile.data ? (
+                    <ProfileDetails
+                        client:load
+                        user={profile.data!}
+                    />
+                ) : (
+                    <div class="p-4">
+                        <ErrorCard
+                            message={profile.error}
+                            status={profile.status}
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</Layout>

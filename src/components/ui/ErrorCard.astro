@@ -1,0 +1,95 @@
+---
+interface Props {
+    title?: string;
+    message?: string | null;
+    status?: number;
+    retryHref?: string;
+}
+
+const ERROR_MAP: Record<
+    number,
+    {
+        title: string;
+        message: string;
+        icon: string;
+        bg: string;
+        text: string;
+        border: string;
+    }
+> = {
+    401: {
+        title: "No tienes acceso a este contenido",
+        message:
+            "Tu sesión puede haber expirado. Vuelve a iniciar sesión para continuar.",
+        icon: "⚠️",
+        bg: "bg-red-50",
+        text: "text-red-800",
+        border: "border-red-100",
+    },
+    403: {
+        title: "No tienes permiso para ver esto",
+        message: "Contacta a un administrador si crees que es un error.",
+        icon: "🔒",
+        bg: "bg-red-50",
+        text: "text-red-800",
+        border: "border-red-100",
+    },
+    404: {
+        title: "No encontramos lo que buscas",
+        message: "Es posible que haya sido eliminado o movido.",
+        icon: "🔍",
+        bg: "bg-amber-50",
+        text: "text-amber-800",
+        border: "border-amber-100",
+    },
+    500: {
+        title: "Algo salió mal",
+        message:
+            "Hubo un problema con el servidor. Intenta de nuevo en unos momentos.",
+        icon: "🛑",
+        bg: "bg-red-50",
+        text: "text-red-800",
+        border: "border-red-100",
+    },
+};
+
+const { status, message, retryHref } = Astro.props;
+
+const error = (status ? ERROR_MAP[status] : null) ?? {
+    title: Astro.props.title ?? "Ocurrió un error inesperado",
+    message: Astro.props.message ?? "Intenta de nuevo más tarde.",
+    icon: "❌",
+    bg: "bg-red-50",
+    text: "text-red-800",
+    border: "border-red-100",
+};
+---
+
+<div
+    class={`w-full rounded-2xl p-6 border shadow-sm flex flex-col items-center text-center gap-4 ${error.bg} ${error.border}`}
+>
+    <div class="text-3xl leading-none">
+        {error.icon}
+    </div>
+    <div class="space-y-1">
+        <h2 class={`text-base font-bold ${error.text}`}>
+            {error.title}
+        </h2>
+        <p class="text-sm text-gray-600 max-w-md mx-auto">
+            {message ? message : error.message }
+        </p>
+    </div>
+
+    {
+        retryHref && (
+            <div class="pt-2">
+                <a
+                    href={retryHref}
+                    class="inline-block bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition-colors"
+                >
+                    Reintentar acción
+                </a>
+            </div>
+        )
+    }
+</div>

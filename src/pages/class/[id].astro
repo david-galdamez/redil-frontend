@@ -1,0 +1,41 @@
+---
+import type { Locals } from "astro";
+import ClassDetails from "../../components/classes/ClassDetails";
+import ErrorCard from "../../components/ui/ErrorCard.astro";
+import Layout from "../../layouts/Layout.astro";
+import { getClassDetails } from "../../lib/api/class";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const token = (Astro.locals as Locals).token;
+
+const classDetails = await getClassDetails(id!, token);
+
+if (classDetails.status === 404) return Astro.redirect("/not-found");
+if (classDetails.error) Astro.response.status = classDetails.status;
+---
+
+<Layout>
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-5xl mx-auto">
+            {
+                classDetails?.data ? (
+                    <div class="w-full">
+                        <ClassDetails
+                            client:only
+                            classDetails={classDetails.data!}
+                        />
+                    </div>
+                ) : (
+                    <div class="max-w-2xl mx-auto">
+                        <ErrorCard
+                            message={classDetails.error}
+                            status={classDetails.status}
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</Layout>

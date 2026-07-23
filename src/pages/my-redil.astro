@@ -1,0 +1,75 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RedilDetailsTeachers from "../components/redil/RedilDetailsTeachers.tsx";
+import type { Locals } from "astro";
+import { getRedilDetails } from "../lib/api/redil";
+import ErrorCard from "../components/ui/ErrorCard.astro";
+import { API_URL } from "../lib/api/client";
+
+export const prerender = false;
+
+const user = (Astro.locals as Locals).user;
+const token = (Astro.locals as Locals).token;
+
+if (!user) {
+    return (Astro.response.status = 401);
+}
+
+let profileRedilId: number | null | undefined;
+if (token) {
+    try {
+        const res = await fetch(`${API_URL}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+            const json = await res.json();
+            profileRedilId = json.data?.redilId ?? null;
+        }
+    } catch {
+        // fallback a JWT
+    }
+}
+const rawRedilId = profileRedilId ?? (user?.redil_id ? Number(user.redil_id) : null);
+const redilId = rawRedilId ? String(rawRedilId) : null;
+
+if (!redilId) {
+    Astro.response.status = 403;
+}
+
+const redilDetails = redilId
+    ? await getRedilDetails(redilId, token!)
+    : null;
+
+if (redilDetails?.status === 404) return Astro.redirect("/not-found");
+if (redilDetails?.error) Astro.response.status = redilDetails.status;
+---
+
+<Layout>
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        {
+            !redilId ? (
+                <div class="max-w-2xl mx-auto mt-8">
+                    <ErrorCard
+                        message="No tienes un redil asignado para ver esta página."
+                        status={403}
+                    />
+                </div>
+            ) : redilDetails?.data ? (
+                <div class="w-full">
+                    <RedilDetailsTeachers
+                        client:only
+                        id={redilId}
+                        redil={redilDetails.data}
+                    />
+                </div>
+            ) : (
+                <div class="max-w-2xl mx-auto mt-8">
+                    <ErrorCard
+                        message={redilDetails?.error}
+                        status={redilDetails?.status}
+                    />
+                </div>
+            )
+        }
+    </div>
+</Layout>

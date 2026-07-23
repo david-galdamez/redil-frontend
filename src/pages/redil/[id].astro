@@ -1,0 +1,41 @@
+---
+import type { Locals } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import RedilDetails from "../../components/redil/RedilDetails.tsx";
+import { getRedilDetails } from "../../lib/api/redil";
+import ErrorCard from "../../components/ui/ErrorCard.astro";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const token = (Astro.locals as Locals).token;
+
+const redil = await getRedilDetails(id!, token);
+if (redil.status === 404) return Astro.redirect("/not-found");
+if (redil.error) Astro.response.status = redil.status;
+---
+
+<Layout>
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            {
+                redil?.data ? (
+                    <div class="w-full">
+                        <RedilDetails
+                            client:only
+                            id={id! ?? ""}
+                            redil={redil.data!}
+                        />
+                    </div>
+                ) : (
+                    <div class="max-w-2xl mx-auto">
+                        <ErrorCard
+                            message={redil.error}
+                            status={redil.status}
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</Layout>

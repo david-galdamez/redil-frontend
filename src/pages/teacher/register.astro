@@ -1,0 +1,36 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import RegisterTeacherForm from "../../components/teachers/RegisterTeacherForm.tsx";
+import { getRedilsList } from "../../lib/api/redil";
+import type { Locals } from "astro";
+
+export const prerender = false;
+
+const token = (Astro.locals as Locals).token;
+const redils = await getRedilsList(token);
+if (redils.error) Astro.response.status = redils.status;
+---
+
+<Layout>
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-4xl mx-auto space-y-6">
+            <header class="mb-6">
+                <h1 class="text-2xl md:text-3xl font-bold text-[#003366]">
+                    Registrar profesor
+                </h1>
+                <p class="text-sm text-gray-500 mt-1">
+                    Completa el formulario para crear una cuenta docente.
+                </p>
+            </header>
+
+            <div
+                class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+            >
+                <RegisterTeacherForm
+                    client:load
+                    rediles={redils?.data! || []}
+                />
+            </div>
+        </div>
+    </div>
+</Layout>

@@ -1,0 +1,46 @@
+---
+import type { Locals } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import TeacherDetails from "../../components/teachers/TeacherDetails";
+import { getTeacherDetails, getRedils } from "../../lib/api/teachers";
+import ErrorCard from "../../components/ui/ErrorCard.astro";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const token = (Astro.locals as Locals).token;
+
+const [teacher, redils] = await Promise.all([
+    getTeacherDetails(id!, token),
+    getRedils(),
+]);
+
+if (teacher.status === 404) return Astro.redirect("/not-found");
+if (teacher.error) Astro.response.status = teacher.status;
+---
+
+<Layout>
+    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+        <div class="max-w-5xl mx-auto">
+            {
+                teacher.data ? (
+                    <div class="w-full">
+                        <TeacherDetails
+                            client:load
+                            id={id! ?? ""}
+                            teacher={teacher.data!}
+                            redils={redils.data || []}
+                        />
+                    </div>
+                ) : (
+                    <div class="max-w-2xl mx-auto">
+                        <ErrorCard
+                            message={teacher.error}
+                            status={teacher.status}
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</Layout>
