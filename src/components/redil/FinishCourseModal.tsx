@@ -23,27 +23,28 @@ export default function FinishCourseModal({ redilId, onClose, onSuccess }: Props
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl p-6 shadow-xl border border-gray-100 w-full max-w-md mx-4">
+      <div className="mx-4 w-full max-w-md rounded-2xl border border-gray-100 bg-white p-6 shadow-xl">
         <h2 className="text-lg font-bold text-gray-900">Terminar curso</h2>
-        <p className="text-sm text-gray-600 mt-3 leading-relaxed">
+        <p className="mt-3 text-sm leading-relaxed text-gray-600">
           ¿Estás seguro de que quieres terminar este curso?
         </p>
-        <p className="text-sm text-gray-600 mt-1 leading-relaxed">
-          Todos los estudiantes serán <strong>desactivados</strong> y podrán inscribirse en otros cursos.
+        <p className="mt-1 text-sm leading-relaxed text-gray-600">
+          Todos los estudiantes serán <strong>desactivados</strong> y podrán inscribirse en otros
+          cursos.
         </p>
-        <p className="text-sm text-amber-700 bg-amber-50 border border-amber-100 rounded-xl p-3 mt-4 font-medium">
+        <p className="mt-4 rounded-xl border border-amber-100 bg-amber-50 p-3 text-sm font-medium text-amber-700">
           Esta acción no se puede deshacer.
         </p>
-        <div className="flex items-center gap-3 mt-6">
+        <div className="mt-6 flex items-center gap-3">
           <button
-            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 px-4 rounded-xl text-sm transition-colors"
+            className="flex-1 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
             onClick={onClose}
             disabled={loading}
           >
             Cancelar
           </button>
           <button
-            className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 px-4 rounded-xl text-sm shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleConfirm}
             disabled={loading}
           >

@@ -1,4 +1,3 @@
 import { apiFetch } from "./client";
 
-export const getGroups = () =>
-    apiFetch<GroupDto[]>("api/groups")
+export const getGroups = () => apiFetch<GroupDto[]>("api/groups");

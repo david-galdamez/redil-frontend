@@ -13,7 +13,7 @@ export function useRegisterClassForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,14 +30,14 @@ export function useRegisterClassForm() {
         result.errors.forEach((err) => {
           const field = err.field.toLowerCase() as "date" | "description";
           if (field === "date" || field === "description") {
-            setErrors(prev => ({ ...prev, [field]: err.message }));
+            setErrors((prev) => ({ ...prev, [field]: err.message }));
           }
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error inesperado" }));
+        setErrors((prev) => ({ ...prev, general: result.error || "Ocurrió un error inesperado" }));
         return;
       }
 

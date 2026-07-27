@@ -20,7 +20,7 @@ export function useLoginForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -30,9 +30,10 @@ export function useLoginForm() {
 
     try {
       if (!validatePassword(form.password)) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          password: "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número",
+          password:
+            "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número",
         }));
         return;
       }
@@ -43,16 +44,18 @@ export function useLoginForm() {
         result.errors.forEach((err) => {
           const field = err.field.toLowerCase() as "email" | "password";
           if (field === "email" || field === "password") {
-            setErrors(prev => ({ ...prev, [field]: err.message }));
+            setErrors((prev) => ({ ...prev, [field]: err.message }));
           }
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          general: result.error || (result.status === 401 ? "Credenciales incorrectas" : "Ocurrió un error inesperado"),
+          general:
+            result.error ||
+            (result.status === 401 ? "Credenciales incorrectas" : "Ocurrió un error inesperado"),
         }));
         return;
       }
@@ -63,14 +66,14 @@ export function useLoginForm() {
         setForm(initialForm);
         navigate("/");
       } else {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
           general: "No se recibió el token de autenticación del servidor",
         }));
       }
     } catch (e) {
       console.error(e);
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         general: "Ocurrió un error de red. Verifica tu conexión e intenta de nuevo.",
       }));

@@ -10,20 +10,31 @@ interface Props {
 
 export default function TeacherStats({ redilId }: Props) {
   const {
-    isAdmin, filters, groups, rediles,
-    stats, page, totalPages, loading, error,
-    fetchStats, handleFilterChange,
+    isAdmin,
+    filters,
+    groups,
+    rediles,
+    stats,
+    page,
+    totalPages,
+    loading,
+    error,
+    fetchStats,
+    handleFilterChange,
   } = useTeacherStats(redilId);
 
   const [exporting, setExporting] = useState(false);
+  const [exportFormat, setExportFormat] = useState<"excel" | "pdf">("excel");
 
   async function handleExport() {
     setExporting(true);
     try {
       const token = localStorage.getItem("auth_token");
+
+      const isPdf = exportFormat === "pdf";
       const endpoint = isAdmin
-        ? `${API_URL}/api/redil/stats/export`
-        : `${API_URL}/api/teacher/redil/stats/export`;
+        ? `${API_URL}/api/redil/stats/export${isPdf ? "/pdf" : ""}`
+        : `${API_URL}/api/teacher/redil/stats/export${isPdf ? "/pdf" : ""}`;
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -43,7 +54,7 @@ export default function TeacherStats({ redilId }: Props) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `estadisticas_${filters.fromDate}_${filters.toDate}.xlsx`;
+      a.download = `estadisticas_${filters.fromDate}_${filters.toDate}.${isPdf ? "pdf" : "xlsx"}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -56,7 +67,7 @@ export default function TeacherStats({ redilId }: Props) {
   }
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="w-full space-y-4">
       <StatsFilters
         filters={filters}
         groups={groups}
@@ -65,37 +76,36 @@ export default function TeacherStats({ redilId }: Props) {
         onChange={handleFilterChange}
         onExport={handleExport}
         exporting={exporting}
+        exportFormat={exportFormat}
+        onExportFormatChange={setExportFormat}
       />
 
       {error && (
-        <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm font-medium text-red-600 text-center">
+        <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-center text-sm font-medium text-red-600">
           {error}
         </div>
       )}
 
       {loading && (
-        <div className="py-8 flex justify-center items-center">
+        <div className="flex items-center justify-center py-8">
           <p className="text-sm font-medium text-gray-500">Cargando estadísticas...</p>
         </div>
       )}
 
       {!loading && stats.length === 0 && !error && (
-        <div className="py-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
-          <p className="text-sm text-gray-500">
-            No hay estadísticas para el período seleccionado.
-          </p>
+        <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center">
+          <p className="text-sm text-gray-500">No hay estadísticas para el período seleccionado.</p>
         </div>
       )}
 
       {!loading && stats.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
           <StatsTable
             stats={stats}
             page={page}
             totalPages={totalPages}
             loading={loading}
-            filters={filters}
-            onPageChange={p => fetchStats(p, filters)}
+            onPageChange={(p) => fetchStats(p, filters)}
           />
         </div>
       )}

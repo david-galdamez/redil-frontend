@@ -27,13 +27,15 @@ export function useTeacherForm(id: string, teacher: TeacherDetailsDto) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
           : name === "redilId"
-            ? (value === "" ? null : Number(value))
+            ? value === ""
+              ? null
+              : Number(value)
             : value,
     }));
   };
@@ -53,20 +55,23 @@ export function useTeacherForm(id: string, teacher: TeacherDetailsDto) {
     setErrors(initialErrors);
     setLoading(true);
     try {
-      const result = await apiClient.put<TeacherDetailsDto>(`api/teacher/${id}`, { ...form, isActive: form.active });
+      const result = await apiClient.put<TeacherDetailsDto>(`api/teacher/${id}`, {
+        ...form,
+        isActive: form.active,
+      });
 
       if (result.errors) {
         result.errors.forEach((err) => {
           const field = err.field.toLowerCase() as "name" | "email";
           if (field === "name" || field === "email") {
-            setErrors(prev => ({ ...prev, [field]: err.message }));
+            setErrors((prev) => ({ ...prev, [field]: err.message }));
           }
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error inesperado" }));
+        setErrors((prev) => ({ ...prev, general: result.error || "Ocurrió un error inesperado" }));
         return;
       }
 

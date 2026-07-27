@@ -10,7 +10,10 @@ interface Props {
   redil: RedilDetailsDto;
 }
 
-enum Tabs { Students, Stats }
+enum Tabs {
+  Students,
+  Stats,
+}
 
 const TAB_LIST = [
   { id: Tabs.Students, label: "Estudiantes" },
@@ -24,16 +27,25 @@ export default function RedilDetailsTeacher({ id, redil }: Props) {
   return (
     <section className="space-y-6">
       <header className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-[#003366]">Detalles del redil</h1>
-        <p className="text-sm text-gray-500 mt-1">Gestión de tu redil asignado.</p>
+        <h1 className="text-2xl font-bold text-[#003366] md:text-3xl">Detalles del redil</h1>
+        <p className="mt-1 text-sm text-gray-500">Gestión de tu redil asignado.</p>
       </header>
 
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-5">
+      <div className="space-y-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-gray-700">Nombre</label>
           <input
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 disabled:opacity-75 disabled:cursor-not-allowed"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 disabled:cursor-not-allowed disabled:opacity-75"
             value={redil.name}
+            disabled
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-semibold text-gray-700">Número de curso</label>
+          <input
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 disabled:cursor-not-allowed disabled:opacity-75"
+            value={redil.numCourse}
             disabled
           />
         </div>
@@ -41,7 +53,7 @@ export default function RedilDetailsTeacher({ id, redil }: Props) {
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-gray-700">Descripción</label>
           <textarea
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 min-h-[96px] resize-none disabled:opacity-75 disabled:cursor-not-allowed"
+            className="min-h-[96px] w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 disabled:cursor-not-allowed disabled:opacity-75"
             value={redil.description}
             disabled
           />
@@ -51,10 +63,10 @@ export default function RedilDetailsTeacher({ id, redil }: Props) {
           <LinkCard label="Link de asistencia:" link={redilLink} />
         </div>
 
-        <div className="pt-4 border-t border-gray-50">
+        <div className="border-t border-gray-50 pt-4">
           <RedilTabs
             tabs={TAB_LIST}
-            renderTab={activeTab => (
+            renderTab={(activeTab) => (
               <div className="mt-4">
                 {activeTab === Tabs.Stats && <TeacherStats redilId={id} />}
                 {activeTab === Tabs.Students && <StudentsTab redilId={id} />}
@@ -63,10 +75,10 @@ export default function RedilDetailsTeacher({ id, redil }: Props) {
           />
         </div>
       </div>
-      <div className="pt-6 border-t border-gray-100 flex justify-end">
+      <div className="flex justify-end border-t border-gray-100 pt-6">
         <button
           onClick={() => setShowFinishModal(true)}
-          className="w-full sm:w-fit bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 px-6 rounded-xl text-sm shadow-sm transition-colors"
+          className="w-full rounded-xl bg-red-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700 sm:w-fit"
         >
           Terminar curso
         </button>
