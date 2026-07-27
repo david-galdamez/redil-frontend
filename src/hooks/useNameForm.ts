@@ -30,25 +30,27 @@ export function useNameForm(user: UserDetailsDto) {
     setErrors(initialErrors);
 
     if (form.name.trim().length < 2) {
-      setErrors(prev => ({ ...prev, name: "El nombre debe tener al menos 2 caracteres." }));
+      setErrors((prev) => ({ ...prev, name: "El nombre debe tener al menos 2 caracteres." }));
       return;
     }
 
     setLoading(true);
     try {
-      const result = await apiClient.patch<UserDetailsDto>("api/auth/me", { name: form.name.trim() });
+      const result = await apiClient.patch<UserDetailsDto>("api/auth/me", {
+        name: form.name.trim(),
+      });
 
       if (result.errors) {
         result.errors.forEach((err) => {
           if (err.field.toLowerCase() === "name") {
-            setErrors(prev => ({ ...prev, name: err.message }));
+            setErrors((prev) => ({ ...prev, name: err.message }));
           }
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error inesperado." }));
+        setErrors((prev) => ({ ...prev, general: result.error || "Ocurrió un error inesperado." }));
         return;
       }
 

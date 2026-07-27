@@ -7,7 +7,7 @@ import type { JwtUser, UserDetailsDto } from "./types/user";
 const API_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:3000";
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const { redirect, url, cookies } = context
+  const { redirect, url, cookies } = context;
 
   const pathname = url.pathname;
 
@@ -62,15 +62,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-
   if (!user && !isPublic) {
     return redirect("/login");
   }
 
   if (user && isLogin) {
-    return user.role === "Admin"
-      ? redirect("/")
-      : redirect("/my-redil");
+    return user.role === "Admin" ? redirect("/") : redirect("/my-redil");
   }
 
   if (user && user.role === "Maestro" && pathname === "/") {

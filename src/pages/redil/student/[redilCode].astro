@@ -10,54 +10,50 @@ export const prerender = false;
 
 const { redilCode } = Astro.params;
 
-const [redils, groups] = await Promise.all([
-    getRedilByCode(redilCode!),
-    getGroups(),
-]);
+const [redils, groups] = await Promise.all([getRedilByCode(redilCode!), getGroups()]);
 
 if (redils.status === 404) return Astro.redirect("/not-found");
 if (redils.error) Astro.response.status = redils.status;
 ---
 
 <Layout>
-    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
-        <div class="max-w-4xl mx-auto">
-            {
-                redils?.data ? (
-                    <div class="space-y-6">
-                        <header class="mb-6">
-                            <h1 class="text-2xl md:text-3xl font-bold text-[#003366]">
-                                Inscripción a {redils?.data?.name}
-                            </h1>
-                            <p class="text-sm text-gray-500 mt-1">
-                                {redils?.data?.description}
-                            </p>
-                        </header>
+  <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+    <div class="mx-auto max-w-4xl">
+      {
+        redils?.data ? (
+          <div class="space-y-6">
+            <header class="mb-6">
+              <div class="mb-1 flex flex-wrap items-center gap-3">
+                <h1 class="text-2xl font-bold text-[#003366] md:text-3xl">
+                  Inscripción a {redils?.data?.name}
+                </h1>
+                <span class="inline-block rounded-lg bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
+                  Curso #{redils?.data?.numCourse}
+                </span>
+              </div>
+              <p class="mt-1 text-sm text-gray-500">{redils?.data?.description}</p>
+            </header>
 
-                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-wrap items-center justify-between gap-2">
-                            <p class="text-sm text-gray-600">
-                                Completa el formulario para registrar tu
-                                inscripción al redil.
-                            </p>
-                        </div>
+            <div class="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <p class="text-sm text-gray-600">
+                Completa el formulario para registrar tu inscripción al redil.
+              </p>
+            </div>
 
-                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-4">
-                            <RedilRegisterForm
-                                client:load
-                                redilCode={redilCode || ""}
-                                groups={groups?.data || []}
-                            />
-                        </div>
-                    </div>
-                ) : (
-                    <div class="max-w-2xl mx-auto">
-                        <ErrorCard
-                            message={redils?.error}
-                            status={redils?.status}
-                        />
-                    </div>
-                )
-            }
-        </div>
+            <div class="mt-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <RedilRegisterForm
+                client:load
+                redilCode={redilCode || ""}
+                groups={groups?.data || []}
+              />
+            </div>
+          </div>
+        ) : (
+          <div class="mx-auto max-w-2xl">
+            <ErrorCard message={redils?.error} status={redils?.status} />
+          </div>
+        )
+      }
     </div>
+  </div>
 </Layout>

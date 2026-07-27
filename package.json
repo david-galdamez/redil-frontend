@@ -10,7 +10,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "pnpm exec wrangler deploy"
+    "deploy": "pnpm exec wrangler deploy",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.13",
@@ -28,7 +32,17 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-astro": "^3.0.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0",
     "wrangler": "^4.95.0"
   }
 }

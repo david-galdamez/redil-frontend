@@ -18,10 +18,7 @@ export type ApiResult<T> = {
   errors?: Error[];
 };
 
-export async function apiFetch<T>(
-  path: string,
-  options: FetchOptions = {},
-): Promise<ApiResult<T>> {
+export async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<ApiResult<T>> {
   try {
     const headers: Record<string, string> & {
       "Content-Type"?: string;
@@ -57,17 +54,31 @@ export async function apiFetch<T>(
         document.cookie = "access_token=; path=/; max-age=0";
         window.location.href = "/login";
       }
-      return { data: null, error: json.message ?? "No autorizado", status: 401, errors: json.errors };
+      return {
+        data: null,
+        error: json.message ?? "No autorizado",
+        status: 401,
+        errors: json.errors,
+      };
     }
 
     if (!res.ok) {
-      return { data: null, error: json.message ?? "Error", status: res.status, errors: json.errors };
+      return {
+        data: null,
+        error: json.message ?? "Error",
+        status: res.status,
+        errors: json.errors,
+      };
     }
 
     return { data: json.data ?? null, error: null, status: res.status, errors: json.errors };
   } catch (e) {
-    console.error(e)
-    return { data: null, error: `Error conectando: ${e instanceof Error ? e.message : String(e)}`, status: 500 };
+    console.error(e);
+    return {
+      data: null,
+      error: `Error conectando: ${e instanceof Error ? e.message : String(e)}`,
+      status: 500,
+    };
   }
 }
 

@@ -1,23 +1,25 @@
 import { formatDateReadable } from "../../lib/formatDate";
 import { useAssistForm } from "../../hooks/useAssistForm";
-import EmailAutocomplete from "../ui/EmailAutocomplete";
+import PhoneAutocomplete from "../ui/PhoneAutocomplete";
 
 interface Props {
   assistClass: AssisClassDetailDto;
   attendanceToken: string;
-  emails: string[];
+  phones: string[];
 }
 
-export default function AssistClassDetails({ assistClass, attendanceToken, emails }: Props) {
-  const { form, loading, errors, handleChange, handleSubmit, setEmail } =
+export default function AssistClassDetails({ assistClass, attendanceToken, phones }: Props) {
+  const { form, loading, errors, handleChange, handleSubmit, setPhone } =
     useAssistForm(attendanceToken);
 
   return (
     <section className="space-y-6">
       <header className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-[#003366]">Asistencia - {assistClass.redilName}</h1>
-        <p className="text-sm text-gray-700 mt-2 font-medium">{assistClass.classDescription}</p>
-        <div className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-lg">
+        <h1 className="text-2xl font-bold text-[#003366] md:text-3xl">
+          Asistencia - {assistClass.redilName}
+        </h1>
+        <p className="mt-2 text-sm font-medium text-gray-700">{assistClass.classDescription}</p>
+        <div className="mt-3 inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-1.5">
           <i className="ti ti-calendar text-[#003366]"></i>
           <p className="text-xs font-bold text-[#003366]">
             Clase dada: {formatDateReadable(assistClass.classDate)}
@@ -25,20 +27,25 @@ export default function AssistClassDetails({ assistClass, attendanceToken, email
         </div>
       </header>
 
-      <form className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-5" onSubmit={handleSubmit}>
-
-        <EmailAutocomplete
-          value={form.email}
-          emails={emails}
-          onChange={val => setEmail(val)}
-          onSelect={setEmail}
-          error={errors.email}
+      <form
+        className="space-y-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+        onSubmit={handleSubmit}
+      >
+        <PhoneAutocomplete
+          value={form.phone}
+          phones={phones}
+          onChange={(val) => setPhone(val)}
+          onSelect={setPhone}
+          error={errors.phone}
         />
 
         <div className="pt-2">
-          <label className="inline-flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors select-none" htmlFor="attended">
+          <label
+            className="inline-flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 transition-colors select-none hover:bg-gray-100"
+            htmlFor="attended"
+          >
             <input
-              className="w-4 h-4 rounded border-gray-300 text-[#003366] focus:ring-[#003366]"
+              className="h-4 w-4 rounded border-gray-300 text-[#003366] focus:ring-[#003366]"
               type="checkbox"
               name="attended"
               id="attended"
@@ -50,14 +57,14 @@ export default function AssistClassDetails({ assistClass, attendanceToken, email
         </div>
 
         {errors.general && (
-          <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
-            <p className="text-xs font-medium text-red-600 text-center">{errors.general}</p>
+          <div className="rounded-xl border border-red-100 bg-red-50 p-3">
+            <p className="text-center text-xs font-medium text-red-600">{errors.general}</p>
           </div>
         )}
 
-        <div className="pt-2 border-t border-gray-50">
+        <div className="border-t border-gray-50 pt-2">
           <button
-            className="w-full sm:w-fit bg-[#003366] hover:bg-[#002244] text-white font-medium py-2.5 px-6 rounded-xl text-sm shadow-sm transition-colors disabled:opacity-50"
+            className="w-full rounded-xl bg-[#003366] px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#002244] disabled:opacity-50 sm:w-fit"
             type="submit"
             disabled={loading}
           >

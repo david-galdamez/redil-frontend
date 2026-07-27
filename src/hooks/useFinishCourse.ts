@@ -9,9 +9,7 @@ export function useFinishCourse() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiClient.post<boolean>(
-        `api/redil/${redilId}/finish-course`,
-      );
+      const result = await apiClient.post<boolean>(`api/redil/${redilId}/finish-course`);
       if (result.error) {
         setError(result.error);
         return false;

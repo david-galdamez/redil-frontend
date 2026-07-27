@@ -2,26 +2,30 @@ import { useState, useEffect } from "react";
 import { toast } from "@pheralb/toast";
 import { apiClient } from "../lib/api/client";
 
-const initialErrors = { name: "", description: "", general: "" };
+const initialErrors = { name: "", description: "", numCourse: "", general: "" };
 
 export function useRedilForm(id: string, redil: RedilDetailsDto) {
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ name: redil.name, description: redil.description });
+  const [form, setForm] = useState({
+    name: redil.name,
+    description: redil.description,
+    numCourse: redil.numCourse,
+  });
   const [errors, setErrors] = useState(initialErrors);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setForm({ name: redil.name, description: redil.description });
+    setForm({ name: redil.name, description: redil.description, numCourse: redil.numCourse });
     setErrors(initialErrors);
   }, [redil]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: name === "numCourse" ? Number(value) : value }));
   };
 
   const handleCancel = () => {
-    setForm({ name: redil.name, description: redil.description });
+    setForm({ name: redil.name, description: redil.description, numCourse: redil.numCourse });
     setErrors(initialErrors);
     setEditing(false);
   };
@@ -34,16 +38,18 @@ export function useRedilForm(id: string, redil: RedilDetailsDto) {
 
       if (result.errors) {
         result.errors.forEach((err) => {
-          const field = err.field.toLowerCase() as "name" | "description";
-          if (field === "name" || field === "description") {
-            setErrors(prev => ({ ...prev, [field]: err.message }));
-          }
+          const field = err.field.toLowerCase();
+          if (field === "name") setErrors((prev) => ({ ...prev, name: err.message }));
+          else if (field === "description")
+            setErrors((prev) => ({ ...prev, description: err.message }));
+          else if (field === "numcourse")
+            setErrors((prev) => ({ ...prev, numCourse: err.message }));
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error inesperado" }));
+        setErrors((prev) => ({ ...prev, general: result.error || "Ocurrió un error inesperado" }));
         return;
       }
 

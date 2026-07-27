@@ -2,9 +2,9 @@ import { useState } from "react";
 import { toast } from "@pheralb/toast";
 import { apiClient } from "../lib/api/client";
 
-const initialForm = { name: "", email: "", isServer: false, groupId: "" };
-const initialErrors = { name: "", email: "", groupId: "", general: "" };
-const VALIDATED_FIELDS = ["name", "email", "groupid"] as const;
+const initialForm = { name: "", phone: "", email: "", isServer: false, groupId: "" };
+const initialErrors = { name: "", phone: "", email: "", groupId: "", general: "" };
+const VALIDATED_FIELDS = ["name", "phone", "email", "groupid"] as const;
 
 export function useRedilRegisterForm(redilCode: string) {
   const [form, setForm] = useState(initialForm);
@@ -13,7 +13,7 @@ export function useRedilRegisterForm(redilCode: string) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
@@ -24,7 +24,7 @@ export function useRedilRegisterForm(redilCode: string) {
     setErrors(initialErrors);
 
     if (!form.groupId) {
-      setErrors(prev => ({ ...prev, groupId: "Debes seleccionar un grupo" }));
+      setErrors((prev) => ({ ...prev, groupId: "Debes seleccionar un grupo" }));
       return;
     }
 
@@ -36,15 +36,15 @@ export function useRedilRegisterForm(redilCode: string) {
         result.errors.forEach((err) => {
           const field = err.field.toLowerCase();
           const mapped = field === "groupid" ? "groupId" : field;
-          if (VALIDATED_FIELDS.includes(field as typeof VALIDATED_FIELDS[number])) {
-            setErrors(prev => ({ ...prev, [mapped]: err.message }));
+          if (VALIDATED_FIELDS.includes(field as (typeof VALIDATED_FIELDS)[number])) {
+            setErrors((prev) => ({ ...prev, [mapped]: err.message }));
           }
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error desconocido" }));
+        setErrors((prev) => ({ ...prev, general: result.error || "Ocurrió un error desconocido" }));
         return;
       }
 

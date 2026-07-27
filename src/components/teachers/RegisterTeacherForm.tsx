@@ -1,4 +1,5 @@
 import { useRegisterTeacherForm } from "../../hooks/useRegisterTeacherForm";
+import SelectWrapper from "../ui/SelectWrapper";
 
 interface Props {
   rediles: RedilListDto[];
@@ -11,9 +12,11 @@ export default function RegisterTeacherForm({ rediles }: Props) {
     <form className="space-y-5" onSubmit={handleSubmit}>
       <div className="grid gap-5 md:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700" htmlFor="name">Nombre</label>
+          <label className="text-sm font-semibold text-gray-700" htmlFor="name">
+            Nombre
+          </label>
           <input
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
             type="text"
             id="name"
             name="name"
@@ -21,13 +24,15 @@ export default function RegisterTeacherForm({ rediles }: Props) {
             value={form.name}
             onChange={handleChange}
           />
-          {errors.name && <p className="text-xs font-medium text-red-600 mt-1">{errors.name}</p>}
+          {errors.name && <p className="mt-1 text-xs font-medium text-red-600">{errors.name}</p>}
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700" htmlFor="email">Correo electrónico</label>
+          <label className="text-sm font-semibold text-gray-700" htmlFor="email">
+            Correo electrónico
+          </label>
           <input
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
             type="email"
             id="email"
             name="email"
@@ -35,15 +40,17 @@ export default function RegisterTeacherForm({ rediles }: Props) {
             value={form.email}
             onChange={handleChange}
           />
-          {errors.email && <p className="text-xs font-medium text-red-600 mt-1">{errors.email}</p>}
+          {errors.email && <p className="mt-1 text-xs font-medium text-red-600">{errors.email}</p>}
         </div>
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700" htmlFor="password">Contraseña</label>
+          <label className="text-sm font-semibold text-gray-700" htmlFor="password">
+            Contraseña
+          </label>
           <input
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
             type="password"
             id="password"
             name="password"
@@ -51,37 +58,47 @@ export default function RegisterTeacherForm({ rediles }: Props) {
             value={form.password}
             onChange={handleChange}
           />
-          {errors.password && <p className="text-xs font-medium text-red-600 mt-1">{errors.password}</p>}
+          {errors.password && (
+            <p className="mt-1 text-xs font-medium text-red-600">{errors.password}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700" htmlFor="redilId">Redil</label>
-          <select
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800 h-[46px]"
-            name="redilId"
-            id="redilId"
-            required
-            value={form.redilId}
-            onChange={handleChange}
-          >
-            <option value="0">Seleccione un redil</option>
-            {rediles.map(r => (
-              <option key={r.id} value={r.id}>{r.name}</option>
-            ))}
-          </select>
-          {errors.redilId && <p className="text-xs font-medium text-red-600 mt-1">{errors.redilId}</p>}
+          <label className="text-sm font-semibold text-gray-700" htmlFor="redilId">
+            Redil
+          </label>
+          <SelectWrapper>
+            <select
+              className="h-[46px] w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 pr-8 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
+              name="redilId"
+              id="redilId"
+              required
+              value={form.redilId}
+              onChange={handleChange}
+            >
+              <option value="0">Seleccione un redil</option>
+              {rediles.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+          </SelectWrapper>
+          {errors.redilId && (
+            <p className="mt-1 text-xs font-medium text-red-600">{errors.redilId}</p>
+          )}
         </div>
       </div>
 
       {errors.general && (
-        <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
-          <p className="text-xs font-medium text-red-600 text-center">{errors.general}</p>
+        <div className="rounded-xl border border-red-100 bg-red-50 p-3">
+          <p className="text-center text-xs font-medium text-red-600">{errors.general}</p>
         </div>
       )}
 
       <div className="pt-2">
         <button
-          className="w-full sm:w-fit bg-[#003366] hover:bg-[#002244] text-white font-medium py-2.5 px-6 rounded-xl text-sm shadow-sm transition-colors disabled:opacity-50"
+          className="w-full rounded-xl bg-[#003366] px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#002244] disabled:opacity-50 sm:w-fit"
           type="submit"
           disabled={loading}
         >

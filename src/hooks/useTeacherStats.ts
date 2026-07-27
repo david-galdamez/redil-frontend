@@ -2,9 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { apiClient } from "../lib/api/client";
 
 const today = new Date().toISOString().split("T")[0];
-const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-  .toISOString()
-  .split("T")[0];
+const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
 export function useTeacherStats(redilId?: string) {
   const isAdmin = redilId === undefined;
@@ -49,7 +47,10 @@ export function useTeacherStats(redilId?: string) {
         ? `api/redil/stats?page=${targetPage}`
         : `api/teacher/redil/stats?page=${targetPage}`;
 
-      const result = await apiClient.post<PaginatedResponse<RedilClassStatDto[]>>(endpoint, currentFilters);
+      const result = await apiClient.post<PaginatedResponse<RedilClassStatDto[]>>(
+        endpoint,
+        currentFilters
+      );
 
       if (result.data) {
         setStats(result.data.data);
@@ -66,7 +67,7 @@ export function useTeacherStats(redilId?: string) {
   }
 
   function handleFilterChange(partial: Partial<ClassStatsRequestDto>) {
-    setFilters(prev => {
+    setFilters((prev) => {
       const updated = { ...prev, ...partial };
       clearTimeout(debounceRef.current!);
       debounceRef.current = setTimeout(() => fetchStats(1, updated), 500);

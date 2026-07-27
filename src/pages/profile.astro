@@ -12,23 +12,17 @@ if (profile.error) Astro.response.status = profile.status;
 ---
 
 <Layout>
-    <div class="min-h-screen bg-[#F4F6F9] md:p-8">
-        <div class="max-w-4xl mx-auto">
-            {
-                profile.data ? (
-                    <ProfileDetails
-                        client:load
-                        user={profile.data!}
-                    />
-                ) : (
-                    <div class="p-4">
-                        <ErrorCard
-                            message={profile.error}
-                            status={profile.status}
-                        />
-                    </div>
-                )
-            }
-        </div>
+  <div class="min-h-screen bg-[#F4F6F9] md:p-8">
+    <div class="mx-auto max-w-4xl">
+      {
+        profile.data ? (
+          <ProfileDetails client:load user={profile.data!} />
+        ) : (
+          <div class="p-4">
+            <ErrorCard message={profile.error} status={profile.status} />
+          </div>
+        )
+      }
     </div>
+  </div>
 </Layout>
