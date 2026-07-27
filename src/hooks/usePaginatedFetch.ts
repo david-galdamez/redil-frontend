@@ -38,24 +38,27 @@ export function usePaginatedFetch<T>({
 
   const [filtersVersion, setFiltersVersion] = useState(0);
 
-  const fetchPage = useCallback(async (currentPage: number, searchTerm: string) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({ page: String(currentPage) });
-      if (searchTerm) params.set("search", searchTerm);
-      const current = filtersRef.current;
-      Object.entries(current).forEach(([k, v]) => {
-        if (v) params.set(k, v);
-      });
+  const fetchPage = useCallback(
+    async (currentPage: number, searchTerm: string) => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({ page: String(currentPage) });
+        if (searchTerm) params.set("search", searchTerm);
+        const current = filtersRef.current;
+        Object.entries(current).forEach(([k, v]) => {
+          if (v) params.set(k, v);
+        });
 
-      const result = await apiClient.get<PaginatedResponse<T>>(`${endpoint}?${params}`);
-      if (result.data) setData(result.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [endpoint]);
+        const result = await apiClient.get<PaginatedResponse<T>>(`${endpoint}?${params}`);
+        if (result.data) setData(result.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [endpoint]
+  );
 
   useEffect(() => {
     if (prevSearch.current !== debouncedSearch) {
@@ -67,7 +70,7 @@ export function usePaginatedFetch<T>({
   useEffect(() => {
     if (filterChanged) {
       setPage(1);
-      setFiltersVersion(v => v + 1);
+      setFiltersVersion((v) => v + 1);
     }
   }, [filterChanged]);
 

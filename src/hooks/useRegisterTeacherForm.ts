@@ -17,7 +17,7 @@ export function useRegisterTeacherForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,9 +27,10 @@ export function useRegisterTeacherForm() {
 
     try {
       if (!validatePassword(form.password)) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          password: "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales.",
+          password:
+            "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales.",
         }));
         return;
       }
@@ -38,16 +39,18 @@ export function useRegisterTeacherForm() {
 
       if (result.errors) {
         result.errors.forEach((err) => {
-          const field = (err.field === "redilId" ? "redilId" : err.field.toLowerCase()) as ValidatedField;
-          if (VALIDATED_FIELDS.includes(field as typeof VALIDATED_FIELDS[number])) {
-            setErrors(prev => ({ ...prev, [field]: err.message }));
+          const field = (
+            err.field === "redilId" ? "redilId" : err.field.toLowerCase()
+          ) as ValidatedField;
+          if (VALIDATED_FIELDS.includes(field as (typeof VALIDATED_FIELDS)[number])) {
+            setErrors((prev) => ({ ...prev, [field]: err.message }));
           }
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error inesperado" }));
+        setErrors((prev) => ({ ...prev, general: result.error || "Ocurrió un error inesperado" }));
         return;
       }
 

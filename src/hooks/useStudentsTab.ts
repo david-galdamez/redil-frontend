@@ -25,7 +25,9 @@ export function useStudentsTab(redilId: string) {
         const params = new URLSearchParams({ page: String(page) });
         if (debouncedSearch) params.set("search", debouncedSearch);
 
-        const result = await apiClient.get<PaginatedResponse<StudentListDto[]>>(`api/student/redil/${redilId}?${params}`);
+        const result = await apiClient.get<PaginatedResponse<StudentListDto[]>>(
+          `api/student/redil/${redilId}?${params}`
+        );
 
         if (result.error || result.data === null) {
           setError(result.error || "Error cargando estudiantes");

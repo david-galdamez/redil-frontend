@@ -2,21 +2,20 @@ import { useState, useRef } from "react";
 
 interface Props {
   value: string;
-  emails: string[];
+  phones: string[];
   onChange: (value: string) => void;
-  onSelect: (email: string) => void;
+  onSelect: (phone: string) => void;
   error?: string;
 }
 
-export default function EmailAutocomplete({ value, emails, onChange, onSelect, error }: Props) {
+export default function PhoneAutocomplete({ value, phones, onChange, onSelect, error }: Props) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const getSuggestions = (input: string) => {
     if (!input) return [];
-    const lower = input.toLowerCase();
-    return emails.filter((e) => e.toLowerCase().includes(lower)).slice(0, 5);
+    return phones.filter((p) => p.includes(input)).slice(0, 5);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,8 +25,8 @@ export default function EmailAutocomplete({ value, emails, onChange, onSelect, e
     setActiveSuggestion(-1);
   };
 
-  const selectSuggestion = (email: string) => {
-    onSelect(email);
+  const selectSuggestion = (phone: string) => {
+    onSelect(phone);
     setSuggestions([]);
     setActiveSuggestion(-1);
     inputRef.current?.focus();
@@ -54,15 +53,19 @@ export default function EmailAutocomplete({ value, emails, onChange, onSelect, e
 
   return (
     <div className="flex w-full flex-col gap-1.5">
+      <label className="text-sm font-semibold text-gray-700" htmlFor="phone">
+        Teléfono
+      </label>
       <div className="relative w-full">
         <input
           ref={inputRef}
           className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
-          type="email"
-          name="email"
-          id="email"
+          type="tel"
+          name="phone"
+          id="phone"
           required
           autoComplete="off"
+          placeholder="Ej. 76543210"
           value={value}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -70,17 +73,17 @@ export default function EmailAutocomplete({ value, emails, onChange, onSelect, e
         />
         {suggestions.length > 0 && (
           <ul className="absolute z-50 mt-1.5 w-full divide-y divide-gray-50 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
-            {suggestions.map((email, i) => (
+            {suggestions.map((phone, i) => (
               <li
-                key={email}
+                key={phone}
                 className={`cursor-pointer px-4 py-2.5 text-sm transition-colors ${
                   i === activeSuggestion
                     ? "bg-blue-50 font-medium text-[#003366]"
                     : "text-gray-700 hover:bg-gray-50"
                 }`}
-                onMouseDown={() => selectSuggestion(email)}
+                onMouseDown={() => selectSuggestion(phone)}
               >
-                {email}
+                {phone}
               </li>
             ))}
           </ul>

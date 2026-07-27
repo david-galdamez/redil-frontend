@@ -3,42 +3,45 @@ import { toast } from "@pheralb/toast";
 import { apiClient, type Error } from "../lib/api/client";
 
 export function useAssistForm(attendanceToken: string) {
-  const [form, setForm] = useState({ email: "", attended: false });
+  const [form, setForm] = useState({ phone: "", attended: false });
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({ email: "", general: "" });
+  const [errors, setErrors] = useState({ phone: "", general: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const setEmail = (email: string) => setForm(prev => ({ ...prev, email }));
+  const setPhone = (phone: string) => setForm((prev) => ({ ...prev, phone }));
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setErrors({ email: "", general: "" });
+    setErrors({ phone: "", general: "" });
     try {
-      const result = await apiClient.post<string>(`api/class/assist/register/${attendanceToken}`, form);
+      const result = await apiClient.post<string>(
+        `api/class/assist/register/${attendanceToken}`,
+        form
+      );
 
       if (result.errors) {
         result.errors.forEach((err: Error) => {
-          if (err.field.toLowerCase() === "email") {
-            setErrors(prev => ({ ...prev, email: err.message }));
+          if (err.field.toLowerCase() === "phone") {
+            setErrors((prev) => ({ ...prev, phone: err.message }));
           }
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error desconocido" }));
+        setErrors((prev) => ({ ...prev, general: result.error || "Ocurrió un error desconocido" }));
         return;
       }
 
-      setForm({ email: "", attended: false });
+      setForm({ phone: "", attended: false });
       toast.success({ text: "Asistencia registrada con éxito" });
     } catch (err) {
       console.error("Error registering assist:", err);
@@ -48,5 +51,5 @@ export function useAssistForm(attendanceToken: string) {
     }
   };
 
-  return { form, loading, errors, handleChange, handleSubmit, setEmail };
+  return { form, loading, errors, handleChange, handleSubmit, setPhone };
 }

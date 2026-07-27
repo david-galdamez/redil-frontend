@@ -4,11 +4,16 @@ export default function RegisterClassForm() {
   const { form, loading, errors, handleChange, handleSubmit } = useRegisterClassForm();
 
   return (
-    <form className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-5" onSubmit={handleSubmit}>
+    <form
+      className="space-y-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+      onSubmit={handleSubmit}
+    >
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-semibold text-gray-700" htmlFor="date">Fecha de la clase</label>
+        <label className="text-sm font-semibold text-gray-700" htmlFor="date">
+          Fecha de la clase
+        </label>
         <input
-          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800"
+          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
           type="datetime-local"
           name="date"
           id="date"
@@ -16,31 +21,35 @@ export default function RegisterClassForm() {
           value={form.date}
           onChange={handleChange}
         />
-        {errors.date && <p className="text-xs font-medium text-red-600 mt-1">{errors.date}</p>}
+        {errors.date && <p className="mt-1 text-xs font-medium text-red-600">{errors.date}</p>}
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-semibold text-gray-700" htmlFor="description">Descripción de la clase</label>
+        <label className="text-sm font-semibold text-gray-700" htmlFor="description">
+          Descripción de la clase
+        </label>
         <textarea
-          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800 min-h-[112px] resize-y"
+          className="min-h-[112px] w-full resize-y rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
           name="description"
           id="description"
           required
           value={form.description}
           onChange={handleChange}
         />
-        {errors.description && <p className="text-xs font-medium text-red-600 mt-1">{errors.description}</p>}
+        {errors.description && (
+          <p className="mt-1 text-xs font-medium text-red-600">{errors.description}</p>
+        )}
       </div>
 
       {errors.general && (
-        <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
-          <p className="text-xs font-medium text-red-600 text-center">{errors.general}</p>
+        <div className="rounded-xl border border-red-100 bg-red-50 p-3">
+          <p className="text-center text-xs font-medium text-red-600">{errors.general}</p>
         </div>
       )}
 
       <div className="pt-2">
         <button
-          className="w-full sm:w-fit bg-[#003366] hover:bg-[#002244] text-white font-medium py-2.5 px-6 rounded-xl text-sm shadow-sm transition-colors disabled:opacity-50"
+          className="w-full rounded-xl bg-[#003366] px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#002244] disabled:opacity-50 sm:w-fit"
           disabled={loading}
           type="submit"
         >

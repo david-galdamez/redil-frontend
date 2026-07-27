@@ -1,4 +1,5 @@
 import { useRedilRegisterForm } from "../../hooks/useRedilRegisterForm";
+import SelectWrapper from "../ui/SelectWrapper";
 
 interface Props {
   redilCode: string;
@@ -12,9 +13,11 @@ export default function RedilRegisterForm({ redilCode, groups }: Props) {
     <form className="space-y-5" onSubmit={handleSubmit}>
       <div className="grid gap-5 md:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700" htmlFor="name">Nombre completo</label>
+          <label className="text-sm font-semibold text-gray-700" htmlFor="name">
+            Nombre completo
+          </label>
           <input
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
             type="text"
             id="name"
             name="name"
@@ -22,49 +25,75 @@ export default function RedilRegisterForm({ redilCode, groups }: Props) {
             value={form.name}
             onChange={handleChange}
           />
-          {errors.name && <p className="text-xs font-medium text-red-600 mt-1">{errors.name}</p>}
+          {errors.name && <p className="mt-1 text-xs font-medium text-red-600">{errors.name}</p>}
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700" htmlFor="email">Correo electrónico</label>
+          <label className="text-sm font-semibold text-gray-700" htmlFor="phone">
+            Teléfono
+          </label>
           <input
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800"
-            type="email"
-            id="email"
-            name="email"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
+            type="tel"
+            id="phone"
+            name="phone"
             required
-            value={form.email}
+            placeholder="Ej. 76543210"
+            value={form.phone}
             onChange={handleChange}
           />
-          {errors.email && <p className="text-xs font-medium text-red-600 mt-1">{errors.email}</p>}
+          {errors.phone && <p className="mt-1 text-xs font-medium text-red-600">{errors.phone}</p>}
         </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-semibold text-gray-700" htmlFor="email">
+          Correo electrónico <span className="font-normal text-gray-400">(opcional)</span>
+        </label>
+        <input
+          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
+          type="email"
+          id="email"
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+        />
+        {errors.email && <p className="mt-1 text-xs font-medium text-red-600">{errors.email}</p>}
       </div>
 
       <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700" htmlFor="groupId">Grupo al que asiste</label>
-          <select
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#003366] focus:bg-white transition-colors text-gray-800 appearance-none"
-            id="groupId"
-            name="groupId"
-            required
-            value={form.groupId}
-            onChange={handleChange}
-          >
-            <option value="">Selecciona un grupo</option>
-            {groups?.map(g => (
-              <option key={g.id} value={g.id}>{g.name}</option>
-            ))}
-          </select>
-          {errors.groupId && <p className="text-xs font-medium text-red-600 mt-1">{errors.groupId}</p>}
+          <label className="text-sm font-semibold text-gray-700" htmlFor="groupId">
+            Grupo al que asiste
+          </label>
+          <SelectWrapper>
+            <select
+              className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 pr-8 text-sm text-gray-800 transition-colors focus:border-[#003366] focus:bg-white focus:outline-none"
+              id="groupId"
+              name="groupId"
+              required
+              value={form.groupId}
+              onChange={handleChange}
+            >
+              <option value="">Selecciona un grupo</option>
+              {groups?.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
+          </SelectWrapper>
+          {errors.groupId && (
+            <p className="mt-1 text-xs font-medium text-red-600">{errors.groupId}</p>
+          )}
         </div>
 
         <label
-          className="inline-flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors select-none h-[46px]"
+          className="inline-flex h-[46px] cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-700 transition-colors select-none hover:bg-gray-100"
           htmlFor="isServer"
         >
           <input
-            className="w-4 h-4 rounded border-gray-300 text-[#003366] focus:ring-[#003366]"
+            className="h-4 w-4 rounded border-gray-300 text-[#003366] focus:ring-[#003366]"
             type="checkbox"
             id="isServer"
             name="isServer"
@@ -76,14 +105,14 @@ export default function RedilRegisterForm({ redilCode, groups }: Props) {
       </div>
 
       {errors.general && (
-        <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
-          <p className="text-xs font-medium text-red-600 text-center">{errors.general}</p>
+        <div className="rounded-xl border border-red-100 bg-red-50 p-3">
+          <p className="text-center text-xs font-medium text-red-600">{errors.general}</p>
         </div>
       )}
 
       <div className="pt-2">
         <button
-          className="w-full sm:w-fit bg-[#003366] hover:bg-[#002244] text-white font-medium py-2.5 px-6 rounded-xl text-sm shadow-sm transition-colors disabled:opacity-50"
+          className="w-full rounded-xl bg-[#003366] px-6 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#002244] disabled:opacity-50 sm:w-fit"
           type="submit"
           disabled={loading}
         >

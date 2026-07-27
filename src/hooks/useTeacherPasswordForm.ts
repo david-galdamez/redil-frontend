@@ -14,7 +14,7 @@ export function useTeacherPasswordForm(teacherId: string) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleCancel = () => {
@@ -28,7 +28,11 @@ export function useTeacherPasswordForm(teacherId: string) {
     setLoading(true);
     try {
       if (!validatePassword(form.newPassword)) {
-        setErrors(prev => ({ ...prev, newPassword: "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números." }));
+        setErrors((prev) => ({
+          ...prev,
+          newPassword:
+            "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números.",
+        }));
         setLoading(false);
         return;
       }
@@ -41,14 +45,14 @@ export function useTeacherPasswordForm(teacherId: string) {
         result.errors.forEach((err) => {
           const field = err.field.toLowerCase();
           if (field === "newpassword") {
-            setErrors(prev => ({ ...prev, newPassword: err.message }));
+            setErrors((prev) => ({ ...prev, newPassword: err.message }));
           }
         });
         return;
       }
 
       if (result.error) {
-        setErrors(prev => ({ ...prev, general: result.error || "Ocurrió un error inesperado." }));
+        setErrors((prev) => ({ ...prev, general: result.error || "Ocurrió un error inesperado." }));
         return;
       }
 

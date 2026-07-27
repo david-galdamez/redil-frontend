@@ -15,27 +15,24 @@ if (assistDetails.error) Astro.response.status = assistDetails.status;
 ---
 
 <Layout>
-    <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
-        <div class="max-w-6xl mx-auto">
-            {
-                assistDetails?.data ? (
-                    <div class="w-full">
-                        <AssistClassDetails
-                            client:load
-                            assistClass={assistDetails.data!}
-                            attendanceToken={assistToken!}
-                            emails={assistDetails.data?.emails!}
-                        />
-                    </div>
-                ) : (
-                    <div class="max-w-2xl mx-auto">
-                        <ErrorCard
-                            message={assistDetails.error}
-                            status={assistDetails.status}
-                        />
-                    </div>
-                )
-            }
-        </div>
+  <div class="min-h-screen bg-[#F4F6F9] p-4 md:p-8">
+    <div class="mx-auto max-w-6xl">
+      {
+        assistDetails?.data ? (
+          <div class="w-full">
+            <AssistClassDetails
+              client:load
+              assistClass={assistDetails.data!}
+              attendanceToken={assistToken!}
+              phones={assistDetails.data.phones}
+            />
+          </div>
+        ) : (
+          <div class="mx-auto max-w-2xl">
+            <ErrorCard message={assistDetails.error} status={assistDetails.status} />
+          </div>
+        )
+      }
     </div>
+  </div>
 </Layout>
